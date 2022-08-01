@@ -19,8 +19,7 @@ public class Particle
 
 public class Particle_Logic : MonoBehaviour
 {
-	public int skipFrames = 0;
-	int skipped = 0;
+	int skipFirstFrames = 2;
 	int numKeyPressed = 1;
 
     public int simWidth = 10;
@@ -42,19 +41,18 @@ public class Particle_Logic : MonoBehaviour
 
 	private void Awake()
 	{
-		cam = Camera.main;
 		particles = new Particle[simWidth * simHeight];
-		particleColors = new Color[particles.Length];
-
-		texture = new Texture2D(simWidth, simHeight);
-		texture.filterMode = FilterMode.Point;
-	}
-	private void Start()
-	{
 		for (int i = 0; i < particles.Length; i++)
 		{
+			particles[i] = new Particle();
 			particles[i].useSecondColor = Random.value > 0.5f;
 		}
+		texture = new Texture2D(simWidth, simHeight);
+		particleColors = new Color[particles.Length];
+		cam = Camera.main;
+		texture.filterMode = FilterMode.Point;
+
+
 	}
 
 	#region Helping Functions
@@ -182,13 +180,10 @@ public class Particle_Logic : MonoBehaviour
 
 	private void FixedUpdate()      //Runs at 50 FPS by default
 	{
-		//Skip over a number of frames to improve performance if needed
-		if (skipped < skipFrames) {
-			skipped++;
-			return;
-		}
-		if(skipped >= skipFrames) {
-			skipped = 0;
+		if(skipFirstFrames > 0)
+		{
+			skipFirstFrames--;
+			//return;
 		}
 		//CreateParticle(1, PositionToIndex(12, 24));	//Create a test particle flow
 

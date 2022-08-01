@@ -335,7 +335,6 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85f1d8a17025b149805276ed344e5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  skipFrames: 0
   simWidth: 50
   simHeight: 50
   particles: []
