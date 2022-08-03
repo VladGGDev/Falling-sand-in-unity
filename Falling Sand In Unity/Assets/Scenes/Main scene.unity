@@ -337,7 +337,6 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   simWidth: 50
   simHeight: 50
-  particles: []
   texture: {fileID: 0}
   colorDiffrence: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
   airColor: {r: 1, g: 1, b: 1, a: 1}

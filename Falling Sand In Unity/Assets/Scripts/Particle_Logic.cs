@@ -19,12 +19,11 @@ public class Particle
 
 public class Particle_Logic : MonoBehaviour
 {
-	int skipFirstFrames = 2;
 	int numKeyPressed = 1;
 
     public int simWidth = 10;
     public int simHeight = 10;
-    public Particle[] particles;
+    public Particle[,] particles;
 	Camera cam;
 
 	[Space(10f)]
@@ -41,11 +40,12 @@ public class Particle_Logic : MonoBehaviour
 
 	private void Awake()
 	{
-		particles = new Particle[simWidth * simHeight];
+		particles = new Particle[simWidth, simHeight];
 		for (int i = 0; i < particles.Length; i++)
 		{
-			particles[i] = new Particle();
-			particles[i].useSecondColor = Random.value > 0.5f;
+			particles[i % simWidth, i / simWidth] = new Particle();
+			particles[i % simWidth, i / simWidth].useSecondColor = Random.value > 0.5f;
+			particles[i % simWidth, i / simWidth].fluidHVel = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
 		}
 		texture = new Texture2D(simWidth, simHeight);
 		particleColors = new Color[particles.Length];
@@ -68,9 +68,9 @@ public class Particle_Logic : MonoBehaviour
 		return new Vector2Int(index % simWidth, index / simWidth);
 	}
 
-    bool CheckForParticle(byte type, int atIndex)
+    bool CheckForParticle(byte type, Vector2Int atPos)
 	{
-		if (particles[atIndex].type == type)
+		if (particles[atPos.x, atPos.y].type == type)
 		{
             return true;
 		}
@@ -80,9 +80,12 @@ public class Particle_Logic : MonoBehaviour
 		}
 	}
 
-	bool CheckForAnyParticle(int atIndex)
+	bool CheckForAnyParticle(Vector2Int atPos)
 	{
-		if (particles[atIndex].type != 0)
+		atPos.x = Mathf.Clamp(atPos.x, 0, simWidth - 1);
+		atPos.y = Mathf.Clamp(atPos.y, 0, simHeight - 1);
+
+		if (particles[atPos.x, atPos.y].type != 0)
 		{
 			return true;
 		}
@@ -92,31 +95,38 @@ public class Particle_Logic : MonoBehaviour
 		}
 	}
 
-	void DeleteParticle(int atIndex)
+	void DeleteParticle(Vector2Int atPos)
 	{
-		if (atIndex < 0 || atIndex >= particles.Length)
-		{
-			Debug.LogWarning("In the DeleteParticle() function, atIndex (= " + atIndex + ") int is outside of array bounds");
-			return;
-		}
+		atPos.x = Mathf.Clamp(atPos.x, 0, simWidth - 1);
+		atPos.y = Mathf.Clamp(atPos.y, 0, simHeight - 1);
+		//if (atatIndexPos < 0 || atIndex >= particles.Length)
+		//{
+		//	Debug.LogWarning("In the DeleteParticle() function, atIndex (= " + atIndex + ") int is outside of array bounds");
+		//	return;
+		//}
 
-		particles[atIndex].type = 0;
+		particles[atPos.x, atPos.y].type = 0;
 	}
 
-	void CreateParticle(byte type, int atIndex)
+	void CreateParticle(byte type, Vector2Int atPos)
 	{
-		if(atIndex < 0 || atIndex >= particles.Length)
-		{
-			Debug.LogWarning("In the CreateParticle() function, atIndex (= " + atIndex + ") int is outside of array bounds");
-			return;
-		}
+		atPos.x = Mathf.Clamp(atPos.x, 0, simWidth - 1);
+		atPos.y = Mathf.Clamp(atPos.y, 0, simHeight - 1);
+		//if (atPos.y < 0 || atPos.y >= particles.Length)
+		//{
+		//	Debug.LogWarning("In the CreateParticle() function, atIndex (= " + atPos + ") int is outside of array bounds");
+		//	return;
+		//}
 
-		particles[atIndex].type = type;
+		particles[atPos.x, atPos.y].type = type;
 	}
 
-	void SetParticleUpdateStatus(int atIndex, bool status)
+	void SetParticleUpdateStatus(Vector2Int atPos, bool status)
 	{
-		particles[atIndex].hasBeenUpdated = status;
+		atPos.x = Mathf.Clamp(atPos.x, 0, simWidth - 1);
+		atPos.y = Mathf.Clamp(atPos.y, 0, simHeight - 1);
+
+		particles[atPos.x, atPos.y].hasBeenUpdated = status;
 	}
 	#endregion
 
@@ -150,13 +160,13 @@ public class Particle_Logic : MonoBehaviour
 				{
 					for (int x = -2; x < 3; x++)
 					{
-						CreateParticle((byte)numKeyPressed, PositionToIndex(gridMousePos.x + x, gridMousePos.y + y));
+						CreateParticle((byte)numKeyPressed, new Vector2Int(gridMousePos.x + x, gridMousePos.y + y));
 					}
 				}
 			}
 			else
 			{
-				CreateParticle((byte)numKeyPressed, PositionToIndex(gridMousePos.x, gridMousePos.y));
+				CreateParticle((byte)numKeyPressed, new Vector2Int(gridMousePos.x, gridMousePos.y));
 			}
 		}
 		if (Input.GetMouseButton(1))
@@ -167,44 +177,39 @@ public class Particle_Logic : MonoBehaviour
 				{
 					for (int x = -2; x < 3; x++)
 					{
-						DeleteParticle(PositionToIndex(gridMousePos.x + x, gridMousePos.y + y));
+						DeleteParticle(new Vector2Int(gridMousePos.x + x, gridMousePos.y + y));
 					}
 				}
 			}
 			else
 			{
-				DeleteParticle(PositionToIndex(gridMousePos.x, gridMousePos.y));
+				DeleteParticle(new Vector2Int(gridMousePos.x, gridMousePos.y));
 			}
 		}
 	}
 
 	private void FixedUpdate()      //Runs at 50 FPS by default
 	{
-		if(skipFirstFrames > 0)
-		{
-			skipFirstFrames--;
-			//return;
-		}
 		//CreateParticle(1, PositionToIndex(12, 24));	//Create a test particle flow
 
 		for (int y = 0; y < simHeight; y++)
 		{
 			for (int x = 0; x < simWidth; x++)
 			{
-				if (particles[PositionToIndex(x, y)].hasBeenUpdated && particles[PositionToIndex(x, y)].type != 0)
+				if (particles[x, y].hasBeenUpdated && particles[x, y].type != 0)
 				{
 					continue;
 				}
 
-				if (CheckForParticle(1, PositionToIndex(x, y)))     //Sand physics
+				if (CheckForParticle(1, new Vector2Int(x, y)))     //Sand physics
 				{
 					SandPhysics(new Vector2Int(x, y));
 				}
-				else if (CheckForParticle(2, PositionToIndex(x, y)))     //Water physics
+				else if (CheckForParticle(2, new Vector2Int(x, y)))     //Water physics
 				{
 					WaterPhysics(new Vector2Int(x, y));
 				}
-				else if (CheckForParticle(3, PositionToIndex(x, y)))     //Solid physics
+				else if (CheckForParticle(3, new Vector2Int(x, y)))     //Solid physics
 				{
 					continue;
 				}
@@ -217,15 +222,17 @@ public class Particle_Logic : MonoBehaviour
 	{
 		for (int i = 0; i < particles.Length; i++)
 		{
-			particles[i].hasBeenUpdated = false;	//Reset update status for every particle
+			int ix = i % simWidth;
+			int iy = i / simWidth;
+			particles[ix, iy].hasBeenUpdated = false;	//Reset update status for every particle
 
-			if (CheckForParticle(0, i))
+			if (CheckForParticle(0, new Vector2Int(ix, iy)))
 			{
 				particleColors[i] = airColor;
 			}
-			else if (CheckForParticle(1, i))
+			else if (CheckForParticle(1, new Vector2Int(ix, iy)))
 			{
-				if (particles[i].useSecondColor)
+				if (particles[ix, iy].useSecondColor)
 				{
 					particleColors[i] = sandColor * colorDiffrence;
 				}
@@ -234,9 +241,9 @@ public class Particle_Logic : MonoBehaviour
 					particleColors[i] = sandColor;
 				}
 			}
-			else if (CheckForParticle(2, i))
+			else if (CheckForParticle(2, new Vector2Int(ix, iy)))
 			{
-				if (particles[i].useSecondColor)
+				if (particles[ix, iy].useSecondColor)
 				{
 					particleColors[i] = waterColor * colorDiffrence;
 				}
@@ -245,9 +252,9 @@ public class Particle_Logic : MonoBehaviour
 					particleColors[i] = waterColor;
 				}
 			}
-			else if (CheckForParticle(3, i))
+			else if (CheckForParticle(3, new Vector2Int(ix, iy)))
 			{
-				if (particles[i].useSecondColor)
+				if (particles[ix, iy].useSecondColor)
 				{
 					particleColors[i] = solidColor * colorDiffrence;
 				}
@@ -267,77 +274,77 @@ public class Particle_Logic : MonoBehaviour
 	{
 		if (particlePos.y == 0)
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x, particlePos.y), true);
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x, particlePos.y), true);
 			return;
 		}
 
-		if (!CheckForAnyParticle(PositionToIndex(particlePos.x, particlePos.y - 1)))    //Check for particle down
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x, particlePos.y - 1)))    //Check for particle down
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x, particlePos.y - 1), true);
-			CreateParticle(1, PositionToIndex(particlePos.x, particlePos.y - 1));
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x, particlePos.y - 1), true);
+			CreateParticle(1, new Vector2Int(particlePos.x, particlePos.y - 1));
 		}
-		else if (!CheckForAnyParticle(PositionToIndex(particlePos.x + 1, particlePos.y - 1)))   //Check for particle down right
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y - 1)))   //Check for particle down right
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x + 1, particlePos.y - 1), true);
-			CreateParticle(1, PositionToIndex(particlePos.x + 1, particlePos.y - 1));
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + 1, particlePos.y - 1), true);
+			CreateParticle(1, new Vector2Int(particlePos.x + 1, particlePos.y - 1));
 		}
-		else if (!CheckForAnyParticle(PositionToIndex(particlePos.x - 1, particlePos.y - 1)))   //Check for particle down left
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x - 1, particlePos.y - 1)))   //Check for particle down left
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x - 1, particlePos.y - 1), true);
-			CreateParticle(1, PositionToIndex(particlePos.x - 1, particlePos.y - 1));
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x - 1, particlePos.y - 1), true);
+			CreateParticle(1, new Vector2Int(particlePos.x - 1, particlePos.y - 1));
 		}
 		else
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x, particlePos.y), true);
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x, particlePos.y), true);
 			return;
 		}
 
-		DeleteParticle(PositionToIndex(particlePos.x, particlePos.y));   //Remove the initial position particle
+		DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));   //Remove the initial position particle
 	}
 
 	void WaterPhysics(Vector2Int particlePos)
 	{
-		sbyte lastVelocity = particles[PositionToIndex(particlePos.x, particlePos.y)].fluidHVel;
+		sbyte lastVelocity = particles[particlePos.x, particlePos.y].fluidHVel;
 
-		if (!CheckForAnyParticle(PositionToIndex(particlePos.x, particlePos.y - 1)) && particlePos.y != 0)    //Check for particle down
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x, particlePos.y - 1)) && particlePos.y != 0)    //Check for particle down
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x, particlePos.y - 1), true);
-			CreateParticle(2, PositionToIndex(particlePos.x, particlePos.y - 1));
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x, particlePos.y - 1), true);
+			CreateParticle(2, new Vector2Int(particlePos.x, particlePos.y - 1));
 		}
-		else if (!CheckForAnyParticle(PositionToIndex(particlePos.x + 1, particlePos.y - 1)))   //Check for particle down right
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y - 1)) && particlePos.y != 0)   //Check for particle down right
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x + 1, particlePos.y - 1), true);
-			CreateParticle(2, PositionToIndex(particlePos.x + 1, particlePos.y - 1));
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + 1, particlePos.y - 1), true);
+			CreateParticle(2, new Vector2Int(particlePos.x + 1, particlePos.y - 1));
 		}
-		else if (!CheckForAnyParticle(PositionToIndex(particlePos.x - 1, particlePos.y - 1)))   //Check for particle down left
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x - 1, particlePos.y - 1)) && particlePos.y != 0)   //Check for particle down left
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x - 1, particlePos.y - 1), true);
-			CreateParticle(2, PositionToIndex(particlePos.x - 1, particlePos.y - 1));
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x - 1, particlePos.y - 1), true);
+			CreateParticle(2, new Vector2Int(particlePos.x - 1, particlePos.y - 1));
 		}
-		else if (!CheckForAnyParticle(PositionToIndex(particlePos.x + lastVelocity, particlePos.y)))	//Check towards velocity
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x + lastVelocity, particlePos.y)))	//Check towards velocity
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x + lastVelocity, particlePos.y), true);
-			CreateParticle(2, PositionToIndex(particlePos.x + lastVelocity, particlePos.y));
-			particles[PositionToIndex(particlePos.x + lastVelocity, particlePos.y)].fluidHVel = lastVelocity;
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + lastVelocity, particlePos.y), true);
+			CreateParticle(2, new Vector2Int(particlePos.x + lastVelocity, particlePos.y));
+			particles[particlePos.x + lastVelocity, particlePos.y].fluidHVel = lastVelocity;
 		}
-		else if (!CheckForAnyParticle(PositionToIndex(particlePos.x + 1, particlePos.y)))		//Check for particle right
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y)))		//Check for particle right
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x + 1, particlePos.y), true);
-			CreateParticle(2, PositionToIndex(particlePos.x + 1, particlePos.y));
-			particles[PositionToIndex(particlePos.x + 1, particlePos.y)].fluidHVel = 1;
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + 1, particlePos.y), true);
+			CreateParticle(2, new Vector2Int(particlePos.x + 1, particlePos.y));
+			particles[particlePos.x + 1, particlePos.y].fluidHVel = 1;
 		}
-		else if (!CheckForAnyParticle(PositionToIndex(particlePos.x - 1, particlePos.y)))       //Check for particle left
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x - 1, particlePos.y)))       //Check for particle left
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x - 1, particlePos.y), true);
-			CreateParticle(2, PositionToIndex(particlePos.x - 1, particlePos.y));
-			particles[PositionToIndex(particlePos.x - 1, particlePos.y)].fluidHVel = -1;
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x - 1, particlePos.y), true);
+			CreateParticle(2, new Vector2Int(particlePos.x - 1, particlePos.y));
+			particles[particlePos.x - 1, particlePos.y].fluidHVel = -1;
 		}
 		else
 		{
-			SetParticleUpdateStatus(PositionToIndex(particlePos.x, particlePos.y), true);
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x, particlePos.y), true);
 			return;
 		}
 
-		DeleteParticle(PositionToIndex(particlePos.x, particlePos.y));   //Remove the initial position particle
+		DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));   //Remove the initial position particle
 	}
 }
