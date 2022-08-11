@@ -3,11 +3,9 @@ using System.Collections.Generic;
 //using System;
 using UnityEngine;
 
-
-
 public class ParticleLogic : MonoBehaviour
 {
-    public int simWidth = 10;
+	public int simWidth = 10;
     public int simHeight = 10;
     public Particle[,] particles;
 
