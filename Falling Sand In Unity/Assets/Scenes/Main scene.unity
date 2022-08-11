@@ -251,6 +251,7 @@ GameObject:
   - component: {fileID: 1626381619}
   - component: {fileID: 1626381618}
   - component: {fileID: 1626381620}
+  - component: {fileID: 1626381621}
   m_Layer: 6
   m_Name: Particle render
   m_TagString: Untagged
@@ -338,10 +339,24 @@ MonoBehaviour:
   simWidth: 50
   simHeight: 50
   texture: {fileID: 0}
-  colorDiffrence: {r: 0.9411765, g: 0.9411765, b: 0.9411765, a: 1}
+  colorDiffrence: 0.075
   airColor: {r: 1, g: 1, b: 1, a: 1}
   sandColor: {r: 1, g: 0.86666673, b: 0.1254902, a: 1}
   waterColor: {r: 0.13725491, g: 0.5764706, b: 1, a: 1}
   solidColor: {r: 0.5754717, g: 0, b: 0, a: 1}
   particleColors: []
   rend: {fileID: 1626381618}
+--- !u!114 &1626381621
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1626381617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 20eb2da4250a4af42bae6acfe275664c, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleLogic: {fileID: 1626381620}
+  shiftThickness: 5
