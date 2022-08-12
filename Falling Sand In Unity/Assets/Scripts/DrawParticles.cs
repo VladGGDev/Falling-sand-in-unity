@@ -5,14 +5,23 @@ using UnityEngine;
 public class DrawParticles : MonoBehaviour
 {
 	public ParticleLogic particleLogic;
+	ParticleObject[] particleObjects;
 	[Range(0, 30)]
 	public int shiftThickness = 5;
-	int numKeyPressed = 1;
+	byte numKeyPressed = 0;
 	Camera cam;
 
 	private void Awake()
 	{
+		particleObjects = new ParticleObject[Mathf.Clamp(particleLogic.particleObjects.Length, 0, 10)];
 		cam = Camera.main;
+		for (int i = 0; i < particleLogic.particleObjects.Length; i++)
+		{
+			if (i >= 10)
+				break;
+
+			particleObjects[i] = particleLogic.particleObjects[i];
+		}
 	}
 
 	private void Update()
@@ -24,18 +33,7 @@ public class DrawParticles : MonoBehaviour
 
 		Vector2Int gridMousePos = new Vector2Int((int)(mousePos.x * particleLogic.simWidth), (int)(mousePos.y * particleLogic.simHeight));
 
-		if (Input.GetKeyDown(KeyCode.Alpha1))
-		{
-			numKeyPressed = 1;
-		}
-		else if (Input.GetKeyDown(KeyCode.Alpha2))
-		{
-			numKeyPressed = 2;
-		}
-		else if (Input.GetKeyDown(KeyCode.Alpha3))
-		{
-			numKeyPressed = 3;
-		}
+		GetAlphaInput();
 
 		if (Input.GetMouseButton(0))
 		{
@@ -45,13 +43,13 @@ public class DrawParticles : MonoBehaviour
 				{
 					for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
 					{
-						particleLogic.CreateParticle((byte)numKeyPressed, new Vector2Int(gridMousePos.x + x, gridMousePos.y + y));
+						particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x + x, gridMousePos.y + y));
 					}
 				}
 			}
 			else
 			{
-				particleLogic.CreateParticle((byte)numKeyPressed, new Vector2Int(gridMousePos.x, gridMousePos.y));
+				particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x, gridMousePos.y));
 			}
 		}
 		if (Input.GetMouseButton(1))
@@ -82,5 +80,51 @@ public class DrawParticles : MonoBehaviour
 				}
 			}
 		}
+	}
+
+	void GetAlphaInput()
+	{
+		if (Input.GetKeyDown(KeyCode.Alpha1))
+		{
+			numKeyPressed = 0;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha2))
+		{
+			numKeyPressed = 1;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha3))
+		{
+			numKeyPressed = 2;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha4))
+		{
+			numKeyPressed = 3;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha5))
+		{
+			numKeyPressed = 4;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha6))
+		{
+			numKeyPressed = 5;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha7))
+		{
+			numKeyPressed = 6;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha8))
+		{
+			numKeyPressed = 7;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha9))
+		{
+			numKeyPressed = 8;
+		}
+		else if (Input.GetKeyDown(KeyCode.Alpha0))
+		{
+			numKeyPressed = 9;
+		}
+
+		numKeyPressed = (byte)Mathf.Clamp(numKeyPressed, 0, particleObjects.Length - 1);
 	}
 }

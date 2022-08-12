@@ -10,24 +10,36 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Sand
+  m_Name: Gas
   m_EditorClassIdentifier: 
-  type: 1
-  particleName: Sand
-  primaryColor: {r: 1, g: 0.8712673, b: 0.135849, a: 1}
-  secondaryColor: {r: 1, g: 0.80487394, b: 0.16199994, a: 1}
+  type: 4
+  particleName: Gas
+  primaryColor: {r: 0.42539036, g: 0.6320754, b: 0.27071908, a: 1}
+  secondaryColor: {r: 0.38101864, g: 0.568, b: 0.2434286, a: 1}
   stepsPerFrame: 1
   waitFrames: 0
   moveChecks:
-  - moveDirection: 0
+  - moveDirection: 8
     movementChance: 1
     continueIfFailed: 0
-  - moveDirection: 1
+  - moveDirection: 9
     movementChance: 1
     continueIfFailed: 0
-  - moveDirection: 2
+  - moveDirection: 10
     movementChance: 1
     continueIfFailed: 0
-  - moveDirection: 3
+  - moveDirection: 11
+    movementChance: 1
+    continueIfFailed: 0
+  - moveDirection: 4
+    movementChance: 1
+    continueIfFailed: 0
+  - moveDirection: 5
+    movementChance: 1
+    continueIfFailed: 0
+  - moveDirection: 6
+    movementChance: 1
+    continueIfFailed: 0
+  - moveDirection: 7
     movementChance: 1
     continueIfFailed: 0

@@ -6,18 +6,15 @@ using UnityEngine;
 public class ParticleLogic : MonoBehaviour
 {
 	public int simWidth = 10;
-    public int simHeight = 10;
-    public Particle[,] particles;
+	public int simHeight = 10;
+	public Particle[,] particles;
+	public ParticleObject[] particleObjects;
 
 	[Space(10f)]
 	public Texture2D texture;
 
-	[Range(0, 1f)]
-	public float colorDiffrence = 0.075f;
-	public Color airColor;
-	public Color sandColor;
-	public Color waterColor;
-	public Color solidColor;
+	public Color backGroundColor = Color.white;
+	public byte backGroundType = 0;
 
 	public Color[] particleColors;
 	public Renderer rend;
@@ -40,6 +37,8 @@ public class ParticleLogic : MonoBehaviour
 		texture.filterMode = FilterMode.Point;
 	}
 
+
+
 	#region Helping Functions
 	//int PositionToIndex (int xPos, int yPos)
 	//{
@@ -53,11 +52,11 @@ public class ParticleLogic : MonoBehaviour
 	//	return new Vector2Int(index % simWidth, index / simWidth);
 	//}
 
-    public bool CheckForParticle(byte type, Vector2Int atPos)
+	public bool CheckForParticle(byte type, Vector2Int atPos)
 	{
 		if (particles[atPos.x, atPos.y].type == type)
 		{
-            return true;
+			return true;
 		}
 		else
 		{
@@ -115,7 +114,7 @@ public class ParticleLogic : MonoBehaviour
 	}
 	#endregion
 
-	
+
 
 	private void FixedUpdate()      //Runs at 50 FPS by default
 	{
@@ -128,18 +127,88 @@ public class ParticleLogic : MonoBehaviour
 					continue;
 				}
 
-				if (CheckForParticle(1, new Vector2Int(x, y)))     //Sand physics
+				for (int i = 0; i < particleObjects.Length; i++)    //Check for every particle object
 				{
-					SandPhysics(new Vector2Int(x, y));
+					if (CheckForParticle(particleObjects[i].type, new Vector2Int(x, y)))
+					{
+						//Check for every movement check for this particle object
+						foreach (ParticleMoveChecks check in particleObjects[i].moveChecks)
+						{
+							if (check.moveDirection == ParticleMoveChecks.MoveDirection.Down)
+							{
+								if (CheckParticleDown(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomDownDiagonal)
+							{
+								if (CheckParticleRandomDownDiagonal(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.DownRight)
+							{
+								if (CheckParticleDownRight(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.DownLeft)
+							{
+								if (CheckParticleDownLeft(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.TowardsHorisontalVelocity)
+							{
+								if (CheckParticleTowardsVelocity(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomHorisontal)
+							{
+								if (CheckParticleRandomVelocity(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.Right)
+							{
+								if (CheckParticleRight(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.Left)
+							{
+								if (CheckParticleLeft(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.Up)
+							{
+								if (CheckParticleUp(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomUpDiagonal)
+							{
+								if (CheckParticleRandomUpDiagonal(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.UpRight)
+							{
+								if (CheckParticleUpRight(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+							else if (check.moveDirection == ParticleMoveChecks.MoveDirection.UpLeft)
+							{
+								if (CheckParticleUpLeft(new Vector2Int(x, y), particleObjects[i].type))
+									break;
+							}
+						}
+					}
 				}
-				else if (CheckForParticle(2, new Vector2Int(x, y)))     //Water physics
-				{
-					WaterPhysics(new Vector2Int(x, y));
-				}
-				else if (CheckForParticle(3, new Vector2Int(x, y)))     //Solid physics
-				{
-					continue;
-				}
+				//if (CheckForParticle(1, new Vector2Int(x, y)))     //Sand physics
+				//{
+				//	SandPhysics(new Vector2Int(x, y));
+				//}
+				//else if (CheckForParticle(2, new Vector2Int(x, y)))     //Water physics
+				//{
+				//	WaterPhysics(new Vector2Int(x, y));
+				//}
+				//else if (CheckForParticle(3, new Vector2Int(x, y)))     //Solid physics
+				//{
+				//	continue;
+				//}
 			}
 		}
 		DrawParticles();
@@ -151,34 +220,53 @@ public class ParticleLogic : MonoBehaviour
 		{
 			int ix = i % simWidth;
 			int iy = i / simWidth;
-			Color particleColor = Color.clear;
 
-			particles[ix, iy].hasBeenUpdated = false;	//Reset update status for every particle
+			particles[ix, iy].hasBeenUpdated = false;   //Reset update status for every particle
 
-			if (CheckForParticle(0, new Vector2Int(ix, iy)))
+			for (int j = 0; j < particleObjects.Length; j++)    //Check for every particle object
 			{
-				particleColors[i] = airColor;	//The air shouldn't have color variations. That would be unhealthy.
-				continue;
+				if (CheckForParticle(particleObjects[j].type, new Vector2Int(ix, iy)))
+				{
+					if (particles[ix, iy].useSecondColor)
+					{
+						particleColors[i] = particleObjects[j].secondaryColor;
+					}
+					else
+					{
+						particleColors[i] = particleObjects[j].primaryColor;
+					}
+				}
+				else if (CheckForParticle(backGroundType, new Vector2Int(ix, iy)))
+				{
+					particleColors[i] = backGroundColor;
+				}
 			}
-			else if (CheckForParticle(1, new Vector2Int(ix, iy)))
-			{
-				particleColor = sandColor;
-			}
-			else if (CheckForParticle(2, new Vector2Int(ix, iy)))
-			{
-				particleColor = waterColor;
-			}
-			else if (CheckForParticle(3, new Vector2Int(ix, iy)))
-			{
-				particleColor = solidColor;
-			}
+			//Color particleColor = Color.clear;
 
-			if (particles[ix, iy].useSecondColor)
-			{
-				particleColor = Color.Lerp(particleColor, Color.black, colorDiffrence);
-			}
+			//if (CheckForParticle(0, new Vector2Int(ix, iy)))
+			//{
+			//	particleColors[i] = airColor;	//The air shouldn't have color variations. That would be unhealthy.
+			//	continue;
+			//}
+			//else if (CheckForParticle(1, new Vector2Int(ix, iy)))
+			//{
+			//	particleColor = sandColor;
+			//}
+			//else if (CheckForParticle(2, new Vector2Int(ix, iy)))
+			//{
+			//	particleColor = waterColor;
+			//}
+			//else if (CheckForParticle(3, new Vector2Int(ix, iy)))
+			//{
+			//	particleColor = solidColor;
+			//}
 
-			particleColors[i] = particleColor;
+			//if (particles[ix, iy].useSecondColor)
+			//{
+			//	particleColor = Color.Lerp(particleColor, Color.black, colorDiffrence);
+			//}
+
+			//particleColors[i] = particleColor;
 		}
 
 		texture.SetPixels(particleColors);
@@ -237,13 +325,14 @@ public class ParticleLogic : MonoBehaviour
 			SetParticleUpdateStatus(new Vector2Int(particlePos.x - 1, particlePos.y - 1), true);
 			CreateParticle(2, new Vector2Int(particlePos.x - 1, particlePos.y - 1));
 		}
-		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x + lastVelocity, particlePos.y)))	//Check towards velocity
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x + lastVelocity, particlePos.y))) //Check towards velocity
 		{
 			SetParticleUpdateStatus(new Vector2Int(particlePos.x + lastVelocity, particlePos.y), true);
 			CreateParticle(2, new Vector2Int(particlePos.x + lastVelocity, particlePos.y));
 			particles[particlePos.x + lastVelocity, particlePos.y].fluidHVel = lastVelocity;
+			particles[particlePos.x, particlePos.y].fluidHVel = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
 		}
-		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y)))		//Check for particle right
+		else if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y)))        //Check for particle right
 		{
 			SetParticleUpdateStatus(new Vector2Int(particlePos.x + 1, particlePos.y), true);
 			CreateParticle(2, new Vector2Int(particlePos.x + 1, particlePos.y));
@@ -263,4 +352,248 @@ public class ParticleLogic : MonoBehaviour
 
 		DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));   //Remove the initial position particle
 	}
+
+	#region Movement Checks
+	bool CheckParticleDown(Vector2Int particlePos, byte particleType)
+	{
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x, particlePos.y - 1)) && particlePos.y != 0)
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x, particlePos.y - 1), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x, particlePos.y - 1));
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleRandomDownDiagonal(Vector2Int particlePos, byte particleType)
+	{
+		if (particlePos.y == 0)
+		{
+			return false;
+		}
+		if (particlePos.x == simWidth - 1)
+		{
+			return false;
+		}
+		if (particlePos.x == 0)
+		{
+			return false;
+		}
+
+		sbyte dir = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + dir, particlePos.y - 1)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + dir, particlePos.y - 1), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x + dir, particlePos.y - 1));
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleDownRight(Vector2Int particlePos, byte particleType)
+	{
+		if (particlePos.y == 0)
+		{
+			return false;
+		}
+		if (particlePos.x == simWidth - 1)
+		{
+			return false;
+		}
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y - 1)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + 1, particlePos.y - 1), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x + 1, particlePos.y - 1));
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleDownLeft(Vector2Int particlePos, byte particleType)
+	{
+		if(particlePos.y == 0)
+		{
+			return false;
+		}
+		if(particlePos.x == 0)
+		{
+			return false;
+		}
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x - 1, particlePos.y - 1)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x - 1, particlePos.y - 1), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x - 1, particlePos.y - 1));
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleTowardsVelocity(Vector2Int particlePos, byte particleType)
+	{
+		if(particlePos.x == 0)
+		{
+			return false;
+		}
+		if(particlePos.x == simWidth - 1)
+		{
+			return false;
+		}
+
+		sbyte lastVelocity = particles[particlePos.x, particlePos.y].fluidHVel;
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + lastVelocity, particlePos.y)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + lastVelocity, particlePos.y), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x + lastVelocity, particlePos.y));
+			particles[particlePos.x + lastVelocity, particlePos.y].fluidHVel = lastVelocity;
+			particles[particlePos.x, particlePos.y].fluidHVel = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleRandomVelocity(Vector2Int particlePos, byte particleType)
+	{
+		if (particlePos.x == 0)
+		{
+			return false;
+		}
+		if(particlePos.x == simWidth - 1)
+		{
+			return false;
+		}
+
+		sbyte randomVelocity = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + randomVelocity, particlePos.y)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + randomVelocity, particlePos.y), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x + randomVelocity, particlePos.y));
+			particles[particlePos.x + randomVelocity, particlePos.y].fluidHVel = randomVelocity;
+			particles[particlePos.x, particlePos.y].fluidHVel = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleRight(Vector2Int particlePos, byte particleType)
+	{
+		if(particlePos.x == simWidth - 1)
+		{
+			return false;
+		}
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + 1, particlePos.y), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x + 1, particlePos.y));
+			particles[particlePos.x + 1, particlePos.y].fluidHVel = 1;
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleLeft(Vector2Int particlePos, byte particleType)
+	{
+		if(particlePos.x == 0)
+		{
+			return false;
+		}
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x - 1, particlePos.y)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x - 1, particlePos.y), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x - 1, particlePos.y));
+			particles[particlePos.x - 1, particlePos.y].fluidHVel = -1;
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleUp(Vector2Int particlePos, byte particleType)
+	{
+		if(particlePos.y == simHeight - 1)
+		{
+			return false;
+		}
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x, particlePos.y + 1)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x, particlePos.y + 1), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x, particlePos.y + 1));
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleRandomUpDiagonal(Vector2Int particlePos, byte particleType)
+	{
+		if(particlePos.y == simHeight - 1)
+		{
+			return false;
+		}
+		if(particlePos.x == simWidth - 1)
+		{
+			return false;
+		}
+		if(particlePos.x == 0)
+		{
+			return false;
+		}
+
+		sbyte dir = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + dir, particlePos.y + 1)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + dir, particlePos.y + 1), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x + dir, particlePos.y + 1));
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleUpRight(Vector2Int particlePos, byte particleType)
+	{
+		if (particlePos.y == simHeight - 1)
+		{
+			return false;
+		}
+		if (particlePos.x == simWidth - 1)
+		{
+			return false;
+		}
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y + 1)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x + 1, particlePos.y + 1), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x + 1, particlePos.y + 1));
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	bool CheckParticleUpLeft(Vector2Int particlePos, byte particleType)
+	{
+		if (particlePos.y == simHeight - 1)
+		{
+			return false;
+		}
+		if(particlePos.x == 0)
+		{
+			return false;
+		}
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x - 1, particlePos.y + 1)))
+		{
+			SetParticleUpdateStatus(new Vector2Int(particlePos.x - 1, particlePos.y + 1), true);
+			CreateParticle(particleType, new Vector2Int(particlePos.x - 1, particlePos.y + 1));
+			DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));
+			return true;
+		}
+		return false;
+	}
+	#endregion
 }
