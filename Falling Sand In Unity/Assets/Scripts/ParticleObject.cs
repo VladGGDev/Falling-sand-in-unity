@@ -15,10 +15,11 @@ public class ParticleObject : ScriptableObject
 	public Color secondaryColor = Color.black;
 
 	[Space(15)]
-	[Tooltip("How many times should this particle move per frame.")]
-	public ushort stepsPerFrame = 1;
 	[Tooltip("How many frames should a particle wait before moving.")]
 	public ushort waitFrames = 0;
+	[Tooltip("If the density of a particle is bigger than the density of another, it will pass through.\n" +
+		"If the densities are equal, the particles will interract normally.")]
+	public int density = 0;
 
 	[Space(15)]
 	[Tooltip("The particle will check in the order of the elements in this array if it can move.")]

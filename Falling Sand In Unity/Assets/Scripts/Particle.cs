@@ -13,5 +13,5 @@ public class Particle
 	public bool useSecondColor = false;
 	public bool hasBeenUpdated = false;
 	public sbyte fluidHVel = 0;
-	//int framesWaited = 0;
+	public int framesWaited = 0;
 }	

@@ -10,24 +10,24 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: anti sand
+  m_Name: Snow
   m_EditorClassIdentifier: 
   type: 6
-  particleName: asdfg
-  primaryColor: {r: 0.21960783, g: 1, b: 0.44726303, a: 1}
-  secondaryColor: {r: 0.2367773, g: 0.916, b: 0.532387, a: 1}
-  stepsPerFrame: 1
-  waitFrames: 0
+  particleName: Snow
+  primaryColor: {r: 0.94, g: 0.94, b: 0.94, a: 1}
+  secondaryColor: {r: 0.91, g: 0.91, b: 0.91, a: 1}
+  waitFrames: 1
+  density: 0
   moveChecks:
-  - moveDirection: 8
+  - moveDirection: 0
+    movementChance: 0.079
+    continueIfFailed: 1
+  - moveDirection: 1
+    movementChance: 0.302
+    continueIfFailed: 0
+  - moveDirection: 2
     movementChance: 1
     continueIfFailed: 0
-  - moveDirection: 9
-    movementChance: 1
-    continueIfFailed: 0
-  - moveDirection: 10
-    movementChance: 1
-    continueIfFailed: 0
-  - moveDirection: 11
+  - moveDirection: 3
     movementChance: 1
     continueIfFailed: 0

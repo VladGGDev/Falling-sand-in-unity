@@ -5,7 +5,7 @@ using UnityEngine;
 public class DrawParticles : MonoBehaviour
 {
 	public ParticleLogic particleLogic;
-	ParticleObject[] particleObjects;
+	public ParticleObject[] particleObjects;
 	[Range(0, 30)]
 	public int shiftThickness = 5;
 	byte numKeyPressed = 0;
@@ -13,14 +13,17 @@ public class DrawParticles : MonoBehaviour
 
 	private void Awake()
 	{
-		particleObjects = new ParticleObject[Mathf.Clamp(particleLogic.particleObjects.Length, 0, 10)];
 		cam = Camera.main;
-		for (int i = 0; i < particleLogic.particleObjects.Length; i++)
+		if (particleObjects.Length == 0)
 		{
-			if (i >= 10)
-				break;
+			particleObjects = new ParticleObject[Mathf.Clamp(particleLogic.particleObjects.Length, 0, 10)];
+			for (int i = 0; i < particleLogic.particleObjects.Length; i++)
+			{
+				if (i >= 10)
+					break;
 
-			particleObjects[i] = particleLogic.particleObjects[i];
+				particleObjects[i] = particleLogic.particleObjects[i];
+			}
 		}
 	}
 
@@ -43,13 +46,13 @@ public class DrawParticles : MonoBehaviour
 				{
 					for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
 					{
-						particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x + x, gridMousePos.y + y));
+						particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x + x, gridMousePos.y + y), false);
 					}
 				}
 			}
 			else
 			{
-				particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x, gridMousePos.y));
+				particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x, gridMousePos.y), false);
 			}
 		}
 		if (Input.GetMouseButton(1))

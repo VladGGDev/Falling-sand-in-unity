@@ -16,8 +16,8 @@ MonoBehaviour:
   particleName: Sand
   primaryColor: {r: 1, g: 0.8712673, b: 0.135849, a: 1}
   secondaryColor: {r: 1, g: 0.80487394, b: 0.16199994, a: 1}
-  stepsPerFrame: 1
   waitFrames: 0
+  density: 0
   moveChecks:
   - moveDirection: 0
     movementChance: 1

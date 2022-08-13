@@ -13,11 +13,12 @@ MonoBehaviour:
   m_Name: Anti Gravity
   m_EditorClassIdentifier: 
   type: 5
-  particleName: asdf
+  particleName: Anti gravity
   primaryColor: {r: 0.55157727, g: 0.045443196, b: 0.6509434, a: 1}
   secondaryColor: {r: 0.5951643, g: 0.07485278, b: 0.696, a: 1}
   stepsPerFrame: 1
   waitFrames: 0
+  density: 0
   moveChecks:
   - moveDirection: 6
     movementChance: 1

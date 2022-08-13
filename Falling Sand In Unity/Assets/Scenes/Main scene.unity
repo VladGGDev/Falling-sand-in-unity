@@ -344,7 +344,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 52ad7984b66c0f84d8798057afeadff5, type: 2}
   - {fileID: 11400000, guid: a20a0b909f2b8bb4db6845be5270e3c9, type: 2}
   - {fileID: 11400000, guid: 6ceed7156995f34488a1244d5ec3f1b5, type: 2}
-  - {fileID: 11400000, guid: a29e7a1b8bc72ff40b62d8f51cc8a352, type: 2}
+  - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
   texture: {fileID: 0}
   backGroundColor: {r: 1, g: 1, b: 1, a: 1}
   backGroundType: 0
@@ -363,4 +363,11 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   particleLogic: {fileID: 1626381620}
+  particleObjects:
+  - {fileID: 11400000, guid: d50be639367907b42970276f2f6c4b16, type: 2}
+  - {fileID: 11400000, guid: c8400a5245bbfe644a98a6433b50dcd8, type: 2}
+  - {fileID: 11400000, guid: 52ad7984b66c0f84d8798057afeadff5, type: 2}
+  - {fileID: 11400000, guid: a20a0b909f2b8bb4db6845be5270e3c9, type: 2}
+  - {fileID: 11400000, guid: 6ceed7156995f34488a1244d5ec3f1b5, type: 2}
+  - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
   shiftThickness: 5

@@ -16,8 +16,8 @@ MonoBehaviour:
   particleName: Water
   primaryColor: {r: 0.10588236, g: 0.5921569, b: 1, a: 1}
   secondaryColor: {r: 0.09800005, g: 0.5424527, b: 1, a: 1}
-  stepsPerFrame: 1
   waitFrames: 0
+  density: 0
   moveChecks:
   - moveDirection: 0
     movementChance: 1

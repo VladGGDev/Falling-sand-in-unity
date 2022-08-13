@@ -16,20 +16,20 @@ MonoBehaviour:
   particleName: Gas
   primaryColor: {r: 0.42539036, g: 0.6320754, b: 0.27071908, a: 1}
   secondaryColor: {r: 0.38101864, g: 0.568, b: 0.2434286, a: 1}
-  stepsPerFrame: 1
-  waitFrames: 0
+  waitFrames: 1
+  density: 0
   moveChecks:
   - moveDirection: 8
-    movementChance: 1
-    continueIfFailed: 0
+    movementChance: 0.08
+    continueIfFailed: 1
   - moveDirection: 9
-    movementChance: 1
-    continueIfFailed: 0
+    movementChance: 0.133
+    continueIfFailed: 1
   - moveDirection: 10
-    movementChance: 1
-    continueIfFailed: 0
+    movementChance: 0.433
+    continueIfFailed: 1
   - moveDirection: 11
-    movementChance: 1
+    movementChance: 0.732
     continueIfFailed: 0
   - moveDirection: 4
     movementChance: 1
