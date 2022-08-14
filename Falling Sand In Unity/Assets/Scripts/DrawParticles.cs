@@ -79,7 +79,7 @@ public class DrawParticles : MonoBehaviour
 			{
 				for (int x = 0; x < particleLogic.particles.GetLength(0); x++)
 				{
-					particleLogic.particles[x, y].type = 0;
+					particleLogic.DeleteParticle(new Vector2Int(x, y));
 				}
 			}
 		}
