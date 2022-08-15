@@ -14,16 +14,9 @@ public class DrawParticles : MonoBehaviour
 	private void Awake()
 	{
 		cam = Camera.main;
-		if (particleObjects.Length == 0)
+		if (particleObjects.Length > 10)
 		{
-			particleObjects = new ParticleObject[Mathf.Clamp(particleLogic.particleObjects.Length, 0, 10)];
-			for (int i = 0; i < particleLogic.particleObjects.Length; i++)
-			{
-				if (i >= 10)
-					break;
-
-				particleObjects[i] = particleLogic.particleObjects[i];
-			}
+			Debug.LogWarning("You can't draw more than 10 diffrent particles, you don't have more than 10 number keys!");
 		}
 	}
 

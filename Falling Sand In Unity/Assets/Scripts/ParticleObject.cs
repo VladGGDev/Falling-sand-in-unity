@@ -45,11 +45,7 @@ public class ParticleMoveChecks
 		UpLeft
 	}
 
-	[Tooltip("Choose the particle movement order.\n" +
-		"For sand, use the first 4,\n" +
-		"for water, use the first 8,\n" +
-		"for gas, use the last 4.\n" +
-		"If you're making something else, see what fits.")]
+	[Tooltip("Choose the particle movement order.")]
 	public MoveDirection moveDirection;
 	[Range(0, 1f)]
 	[Tooltip("How likely is the particle to move this frame.\n" +
