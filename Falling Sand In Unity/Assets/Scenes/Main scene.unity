@@ -240,6 +240,57 @@ Transform:
   m_Father: {fileID: 0}
   m_RootOrder: 0
   m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
+--- !u!1 &851667358
+GameObject:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  serializedVersion: 6
+  m_Component:
+  - component: {fileID: 851667360}
+  - component: {fileID: 851667359}
+  m_Layer: 0
+  m_Name: Particle Manager
+  m_TagString: Untagged
+  m_Icon: {fileID: 0}
+  m_NavMeshLayer: 0
+  m_StaticEditorFlags: 0
+  m_IsActive: 1
+--- !u!114 &851667359
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851667358}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 83b705fefefa9374c8e260214a5ed50d, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  sortParticlesButton: 0
+  particleObjects:
+  - {fileID: 11400000, guid: d50be639367907b42970276f2f6c4b16, type: 2}
+  - {fileID: 11400000, guid: c8400a5245bbfe644a98a6433b50dcd8, type: 2}
+  - {fileID: 11400000, guid: 52ad7984b66c0f84d8798057afeadff5, type: 2}
+  - {fileID: 11400000, guid: a20a0b909f2b8bb4db6845be5270e3c9, type: 2}
+  - {fileID: 11400000, guid: 6ceed7156995f34488a1244d5ec3f1b5, type: 2}
+  - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
+--- !u!4 &851667360
+Transform:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 851667358}
+  m_LocalRotation: {x: 0, y: 0, z: 0, w: 1}
+  m_LocalPosition: {x: 0, y: 0, z: 0}
+  m_LocalScale: {x: 1, y: 1, z: 1}
+  m_Children: []
+  m_Father: {fileID: 0}
+  m_RootOrder: 2
+  m_LocalEulerAnglesHint: {x: 0, y: 0, z: 0}
 --- !u!1 &1626381617
 GameObject:
   m_ObjectHideFlags: 0
@@ -336,8 +387,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85f1d8a17025b149805276ed344e5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simWidth: 512
-  simHeight: 512
+  simWidth: 256
+  simHeight: 256
   chunkWidth: 16
   chunkHeight: 16
   chunkDebug: 0

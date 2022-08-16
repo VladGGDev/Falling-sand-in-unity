@@ -18,6 +18,7 @@ MonoBehaviour:
   secondaryColor: {r: 0.38101864, g: 0.568, b: 0.2434286, a: 1}
   waitFrames: 1
   density: 0
+  globalMoveChance: 1
   moveChecks:
   - moveDirection: 8
     movementChance: 0.08
@@ -43,3 +44,7 @@ MonoBehaviour:
   - moveDirection: 7
     movementChance: 1
     continueIfFailed: 0
+  corosionSettings:
+    corosionChance: 0
+    sortParticlesButton: 0
+    canCorode: []

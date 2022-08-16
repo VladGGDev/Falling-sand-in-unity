@@ -24,7 +24,7 @@ public class ParticleLogic : MonoBehaviour
 	public Color[] particleColors;
 	public Renderer rend;
 
-	private void Awake()
+	private void Start()
 	{
 		particles = new Particle[simWidth, simHeight];	//Instantiate the particle grid
 		for (int y = 0; y < particles.GetLength(1); y++)
@@ -56,11 +56,11 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 
-		particleObjects = new ParticleObject[ParticleSettings.particleObjects.Length]; //Instanciate the particle objects
+		particleObjects = new ParticleObject[ParticleManager.instance.particleObjects.Length]; //Instanciate the particle objects
 		for (int i = 0; i < particleObjects.Length; i++)
 		{
 			particleObjects[i] = ScriptableObject.CreateInstance<ParticleObject>();
-			particleObjects[i] = ParticleSettings.particleObjects[i];
+			particleObjects[i] = ParticleManager.instance.particleObjects[i];
 		}
 
 		texture = new Texture2D(simWidth, simHeight);	//Instanciate the texture
@@ -68,7 +68,7 @@ public class ParticleLogic : MonoBehaviour
 		texture.filterMode = FilterMode.Point;
 	}
 
-
+	
 
 	#region Chunk Functions
 	public Vector2Int ChunkAtPosition(int x, int y)
@@ -178,6 +178,11 @@ public class ParticleLogic : MonoBehaviour
 	{
 		return particleObjects[particles[x, y].type - 1].type;
 	}
+
+	public ParticleObject ParticleObjectFromIndex(int x, int y)
+	{
+		return particleObjects[particles[x, y].type - 1];
+	}
 	#endregion
 
 
@@ -199,6 +204,12 @@ public class ParticleLogic : MonoBehaviour
 				if (particles[x, y].framesWaited != 0)
 				{
 					particles[x, y].framesWaited--;
+					UpdateSurroundingChunks(x, y);
+					continue;
+				}
+				if (Random.value > ParticleObjectFromIndex(x, y).globalMoveChance)
+				{
+					UpdateSurroundingChunks(x, y);
 					continue;
 				}
 				if(!WasChunkUpdated(x, y))
@@ -394,12 +405,21 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 
+		//texture.SetPixels(particleColors);
+		//texture.Apply();
+		//rend.material.mainTexture = texture;
+		StartCoroutine(ApplyTextureToMaterial());
+	}
+
+	public IEnumerator ApplyTextureToMaterial()
+	{
+		yield return new WaitForEndOfFrame();
 		texture.SetPixels(particleColors);
 		texture.Apply();
 		rend.material.mainTexture = texture;
 	}
 
-	void SandPhysics(Vector2Int particlePos)
+	void LegacySandPhysics(Vector2Int particlePos)
 	{
 		if (particlePos.y == 0)
 		{
@@ -431,7 +451,7 @@ public class ParticleLogic : MonoBehaviour
 		DeleteParticle(new Vector2Int(particlePos.x, particlePos.y));   //Remove the initial position particle
 	}
 
-	void WaterPhysics(Vector2Int particlePos)
+	void LegacyWaterPhysics(Vector2Int particlePos)
 	{
 		sbyte lastVelocity = particles[particlePos.x, particlePos.y].fluidHVel;
 

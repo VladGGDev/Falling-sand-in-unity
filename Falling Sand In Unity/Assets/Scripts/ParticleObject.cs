@@ -20,10 +20,28 @@ public class ParticleObject : ScriptableObject
 	[Tooltip("If the density of a particle is bigger than the density of another, it will pass through.\n" +
 		"If the densities are equal, the particles will interract normally.")]
 	public int density = 0;
+	[Range(0, 1f)]
+	[Tooltip("This check happens before trying to move.\n" +
+		"The particle has a chance to not move at all.\n" +
+		"Useful for diminishing cases where the particles form strange towers.")]
+	public float globalMoveChance = 1f;
 
 	[Space(15)]
 	[Tooltip("The particle will check in the order of the elements in this array if it can move.")]
 	public ParticleMoveChecks[] moveChecks = new ParticleMoveChecks[4];
+
+	[Space(10)]
+	public ParticleCorrosion corrosionSettings;
+
+	private void OnValidate()
+	{
+		if (corrosionSettings.sortParticlesButton)
+		{
+			ParticleManager.SortParticleObjectTypes(corrosionSettings.canCorrode);
+			//ParticleManager.MakeParticleTypesConsecutive(corosionSettings.canCorode);
+			corrosionSettings.sortParticlesButton = false;
+		}
+	}
 }
 
 [System.Serializable]
@@ -42,10 +60,13 @@ public class ParticleMoveChecks
 		Up,
 		RandomUpDiagonal,
 		UpRight,
-		UpLeft
+		UpLeft,
+		//CrossAround,
+		//XAround,
+		//EightAround
 	}
 
-	[Tooltip("Choose the particle movement order.")]
+	[Tooltip("Choose the particle movement direction.")]
 	public MoveDirection moveDirection;
 	[Range(0, 1f)]
 	[Tooltip("How likely is the particle to move this frame.\n" +
@@ -54,4 +75,16 @@ public class ParticleMoveChecks
 	[Tooltip("If the Movement Chance fails should this particle check if it can still move in another way?\n" +
 		"Useful for making snow or gas.")]
 	public bool continueIfFailed = false;
+}
+
+[System.Serializable]
+public class ParticleCorrosion
+{
+	[Range(0, 1f)]
+	[Tooltip("The chance to corode.")]
+	public float corrosionChance = 0;
+	[Tooltip("Pretend this is a button.\nAlways press when adding new elements to this array for other scripts to work.")]
+	public bool sortParticlesButton = false;
+	[Tooltip("What particles can be coroded by this one.")]
+	public ParticleObject[] canCorrode;
 }

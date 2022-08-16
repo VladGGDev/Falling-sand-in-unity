@@ -16,6 +16,11 @@ MonoBehaviour:
   particleName: Solid
   primaryColor: {r: 0.7169812, g: 0, b: 0, a: 1}
   secondaryColor: {r: 0.618, g: 0, b: 0, a: 1}
-  stepsPerFrame: 1
   waitFrames: 0
+  density: 0
+  globalMoveChance: 1
   moveChecks: []
+  corosionSettings:
+    corosionChance: 0
+    sortParticlesButton: 0
+    canCorode: []
