@@ -6,7 +6,7 @@ public class ParticleManager : MonoBehaviour
 {
 	[Tooltip("Pretend this is a button")]
     public bool sortParticlesButton = false;
-    [SerializeField]
+    public ParticleObject airParticleObject;
     public ParticleObject[] particleObjects;
     public static ParticleManager instance;
 

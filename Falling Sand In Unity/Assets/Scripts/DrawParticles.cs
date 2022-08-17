@@ -10,6 +10,9 @@ public class DrawParticles : MonoBehaviour
 	public int shiftThickness = 5;
 	byte numKeyPressed = 0;
 	Camera cam;
+	Vector2Int previousMousePos;
+	Vector2Int currentMousePos;
+	
 
 	private void Awake()
 	{
@@ -47,6 +50,12 @@ public class DrawParticles : MonoBehaviour
 			{
 				particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x, gridMousePos.y), false);
 			}
+
+			//previousMousePos = currentMousePos;
+			//currentMousePos = gridMousePos;
+			//LineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y);
+
+			//DrawCircle(gridMousePos.x, gridMousePos.y, 10);
 		}
 		if (Input.GetMouseButton(1))
 		{
@@ -122,5 +131,76 @@ public class DrawParticles : MonoBehaviour
 		}
 
 		numKeyPressed = (byte)Mathf.Clamp(numKeyPressed, 0, particleObjects.Length - 1);
+	}
+
+	void LineDrawing(int x0, int y0, int x1, int y1)
+	{
+
+		int dx = Mathf.Abs(x1 - x0);
+
+		int sx = x0 < x1 ? 1 : -1;
+
+		int dy = -Mathf.Abs(y1 - y0);
+
+		int sy = y0 < y1 ? 1 : -1;
+
+		int error = dx + dy;
+
+
+		while (true)
+		{
+			particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(-x0, -y0));
+			
+
+			if (x0 == x1 && y0 == y1)
+				break;
+
+			int e2 = 2 * error;
+
+			if (e2 >= dy)
+			{
+
+				if (x0 == x1)
+					break;
+
+				error = error + dy;
+
+				x0 = x0 + sx;
+			}
+
+			if (e2 <= dx)
+			{
+
+
+				if (y0 == y1)
+					break;
+
+				error = error + dx;
+
+				y0 = y0 + sy;
+			}
+		}
+		Debug.Log(x1 + " " + y1 + " type = " + particleObjects[numKeyPressed].type);
+	}
+
+	void DrawCircle(int x, int y, int r)
+	{
+		const float PI = 3.1415926535f;
+		float i, angle, x1, y1;
+
+		for (i = 0; i < 360; i += 0.1f)
+		{
+			angle = i;
+			x1 = r * Mathf.Cos(angle * PI / 180);
+			y1 = r * Mathf.Sin(angle * PI / 180);
+			particleLogic.CreateParticle(particleObjects[numKeyPressed].type,
+				new Vector2Int(Mathf.RoundToInt(x + x1), Mathf.RoundToInt(y + y1)));
+		}
+
+		//bool wasInside = false;
+		for (int j = 0; j < r * r * 2; j++)
+		{
+
+		}
 	}
 }

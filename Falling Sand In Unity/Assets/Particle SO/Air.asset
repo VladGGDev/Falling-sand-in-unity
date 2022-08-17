@@ -10,16 +10,16 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Solid
+  m_Name: Air
   m_EditorClassIdentifier: 
-  type: 3
-  particleName: Solid
-  primaryColor: {r: 0.7169812, g: 0, b: 0, a: 1}
-  secondaryColor: {r: 0.618, g: 0, b: 0, a: 1}
+  type: 0
+  particleName: Air
+  primaryColor: {r: 0, g: 0, b: 0, a: 1}
+  secondaryColor: {r: 0, g: 0, b: 0, a: 1}
   waitFrames: 0
   globalMoveChance: 1
   corrosionSettings:
-    resistance: 0.284
+    resistance: 0
     strength: 0
     chance: 0
   moveChecks: []

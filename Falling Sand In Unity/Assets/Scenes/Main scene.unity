@@ -270,6 +270,7 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   sortParticlesButton: 0
+  airParticleObject: {fileID: 11400000, guid: f8665fd15435ac240806546bd89b6503, type: 2}
   particleObjects:
   - {fileID: 11400000, guid: d50be639367907b42970276f2f6c4b16, type: 2}
   - {fileID: 11400000, guid: c8400a5245bbfe644a98a6433b50dcd8, type: 2}
@@ -277,6 +278,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a20a0b909f2b8bb4db6845be5270e3c9, type: 2}
   - {fileID: 11400000, guid: 6ceed7156995f34488a1244d5ec3f1b5, type: 2}
   - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
+  - {fileID: 11400000, guid: 4aa1cc5daa38e1c42a1438d7bea873b3, type: 2}
 --- !u!4 &851667360
 Transform:
   m_ObjectHideFlags: 0
@@ -416,4 +418,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: a20a0b909f2b8bb4db6845be5270e3c9, type: 2}
   - {fileID: 11400000, guid: 6ceed7156995f34488a1244d5ec3f1b5, type: 2}
   - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
+  - {fileID: 11400000, guid: 4aa1cc5daa38e1c42a1438d7bea873b3, type: 2}
   shiftThickness: 5

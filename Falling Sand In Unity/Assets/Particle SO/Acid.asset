@@ -10,18 +10,18 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Water
+  m_Name: Acid
   m_EditorClassIdentifier: 
-  type: 2
-  particleName: Water
-  primaryColor: {r: 0.10588236, g: 0.5921569, b: 1, a: 1}
-  secondaryColor: {r: 0.09800005, g: 0.5424527, b: 1, a: 1}
+  type: 7
+  particleName: Acid
+  primaryColor: {r: 0.37152755, g: 1, b: 0, a: 1}
+  secondaryColor: {r: 0.06577504, g: 1, b: 0, a: 1}
   waitFrames: 0
   globalMoveChance: 0.981
   corrosionSettings:
     resistance: 1
-    strength: 0
-    chance: 0
+    strength: 0.5
+    chance: 0.492
   moveChecks:
   - moveDirection: 0
     movementChance: 1

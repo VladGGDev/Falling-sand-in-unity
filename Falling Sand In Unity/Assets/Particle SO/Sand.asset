@@ -17,8 +17,11 @@ MonoBehaviour:
   primaryColor: {r: 1, g: 0.8712673, b: 0.135849, a: 1}
   secondaryColor: {r: 1, g: 0.80487394, b: 0.16199994, a: 1}
   waitFrames: 0
-  density: 0
   globalMoveChance: 0.9
+  corrosionSettings:
+    resistance: 0
+    strength: 0
+    chance: 0
   moveChecks:
   - moveDirection: 0
     movementChance: 1
@@ -32,7 +35,3 @@ MonoBehaviour:
   - moveDirection: 3
     movementChance: 0.827
     continueIfFailed: 0
-  corosionSettings:
-    corosionChance: 0
-    sortParticlesButton: 0
-    canCorode: []

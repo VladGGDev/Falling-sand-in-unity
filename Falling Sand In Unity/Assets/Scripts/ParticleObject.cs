@@ -17,31 +17,24 @@ public class ParticleObject : ScriptableObject
 	[Space(15)]
 	[Tooltip("How many frames should a particle wait before moving.")]
 	public ushort waitFrames = 0;
-	[Tooltip("If the density of a particle is bigger than the density of another, it will pass through.\n" +
-		"If the densities are equal, the particles will interract normally.")]
-	public int density = 0;
+	//[Tooltip("If the density of a particle is bigger than the density of another, it will pass through.\n" +
+	//	"If the densities are equal, the particles will interract normally.")]
+	//public int density = 0;
 	[Range(0, 1f)]
 	[Tooltip("This check happens before trying to move.\n" +
 		"The particle has a chance to not move at all.\n" +
 		"Useful for diminishing cases where the particles form strange towers.")]
 	public float globalMoveChance = 1f;
 
-	[Space(15)]
-	[Tooltip("The particle will check in the order of the elements in this array if it can move.")]
-	public ParticleMoveChecks[] moveChecks = new ParticleMoveChecks[4];
+	//[Tooltip("How fast will liquids spread.\nHigher values will not form lumps.")]
+	//public int dispersionSpeed = 0;
 
 	[Space(10)]
 	public ParticleCorrosion corrosionSettings;
 
-	private void OnValidate()
-	{
-		if (corrosionSettings.sortParticlesButton)
-		{
-			ParticleManager.SortParticleObjectTypes(corrosionSettings.canCorrode);
-			//ParticleManager.MakeParticleTypesConsecutive(corosionSettings.canCorode);
-			corrosionSettings.sortParticlesButton = false;
-		}
-	}
+	[Space(15)]
+	[Tooltip("The particle will check in the order of the elements in this array if it can move.")]
+	public ParticleMoveChecks[] moveChecks;
 }
 
 [System.Serializable]
@@ -81,10 +74,14 @@ public class ParticleMoveChecks
 public class ParticleCorrosion
 {
 	[Range(0, 1f)]
+	[Tooltip("The resistance to corrosion of a particle.\n" +
+		"Acids must have a resistance of 1 so that they don't corode themselves")]
+	public float resistance = 0;
+	[Range(0, 1f)]
+	[Tooltip("The strength of the acid.\n" +
+		"If the strength is less than the resistance of the other particle, it will not be coroded.")]
+	public float strength = 0;
+	[Range(0, 1f)]
 	[Tooltip("The chance to corode.")]
-	public float corrosionChance = 0;
-	[Tooltip("Pretend this is a button.\nAlways press when adding new elements to this array for other scripts to work.")]
-	public bool sortParticlesButton = false;
-	[Tooltip("What particles can be coroded by this one.")]
-	public ParticleObject[] canCorrode;
+	public float chance = 0;
 }
