@@ -26,15 +26,15 @@ public class ParticleObject : ScriptableObject
 		"Useful for diminishing cases where the particles form strange towers.")]
 	public float globalMoveChance = 1f;
 
-	//[Tooltip("How fast will liquids spread.\nHigher values will not form lumps.")]
-	//public int dispersionSpeed = 0;
+	[Tooltip("How fast will liquids spread.\nHigher values will not form lumps.")]
+	public int dispersionSpeed = 0;
 
 	[Space(10)]
 	public ParticleCorrosion corrosionSettings;
 
 	[Space(15)]
 	[Tooltip("The particle will check in the order of the elements in this array if it can move.")]
-	public ParticleMoveChecks[] moveChecks;
+	public ParticleMoveChecks[] moveChecks = new ParticleMoveChecks[4];
 }
 
 [System.Serializable]

@@ -279,6 +279,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6ceed7156995f34488a1244d5ec3f1b5, type: 2}
   - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
   - {fileID: 11400000, guid: 4aa1cc5daa38e1c42a1438d7bea873b3, type: 2}
+  - {fileID: 11400000, guid: 91ec0d5d88324774b9b2d4d16cc0a067, type: 2}
 --- !u!4 &851667360
 Transform:
   m_ObjectHideFlags: 0
@@ -389,8 +390,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85f1d8a17025b149805276ed344e5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simWidth: 256
-  simHeight: 256
+  simWidth: 32
+  simHeight: 32
   chunkWidth: 16
   chunkHeight: 16
   chunkDebug: 0
@@ -419,4 +420,5 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 6ceed7156995f34488a1244d5ec3f1b5, type: 2}
   - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
   - {fileID: 11400000, guid: 4aa1cc5daa38e1c42a1438d7bea873b3, type: 2}
+  - {fileID: 11400000, guid: 91ec0d5d88324774b9b2d4d16cc0a067, type: 2}
   shiftThickness: 5
