@@ -10,14 +10,15 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Anti Gravity
+  m_Name: dnaS
   m_EditorClassIdentifier: 
   type: 5
-  particleName: Anti gravity
+  particleName: dnaS
   primaryColor: {r: 0.55157727, g: 0.045443196, b: 0.6509434, a: 1}
   secondaryColor: {r: 0.5951643, g: 0.07485278, b: 0.696, a: 1}
   waitFrames: 0
   globalMoveChance: 1
+  dispersionSpeed: 0
   corrosionSettings:
     resistance: 0
     strength: 0

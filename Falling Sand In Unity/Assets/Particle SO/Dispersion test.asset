@@ -18,12 +18,12 @@ MonoBehaviour:
   secondaryColor: {r: 0.10588235, g: 0.5930186, b: 1, a: 1}
   waitFrames: 0
   globalMoveChance: 1
-  dispersionSpeed: 5
+  dispersionSpeed: 10
   corrosionSettings:
     resistance: 0
     strength: 0
     chance: 0
   moveChecks:
-  - moveDirection: 6
+  - moveDirection: 5
     movementChance: 1
     continueIfFailed: 0

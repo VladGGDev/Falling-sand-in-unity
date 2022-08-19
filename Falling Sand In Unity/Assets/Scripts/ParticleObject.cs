@@ -27,7 +27,7 @@ public class ParticleObject : ScriptableObject
 	public float globalMoveChance = 1f;
 
 	[Tooltip("How fast will liquids spread.\nHigher values will not form lumps.")]
-	public int dispersionSpeed = 0;
+	public int dispersionSpeed = 1;
 
 	[Space(10)]
 	public ParticleCorrosion corrosionSettings;

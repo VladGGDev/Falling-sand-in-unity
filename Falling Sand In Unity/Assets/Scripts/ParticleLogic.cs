@@ -513,6 +513,38 @@ public class ParticleLogic : MonoBehaviour
 		particles[Mathf.Clamp(particlePos.x + velocity, 0, simWidth - 1), particlePos.y].fluidHVel = velocity;
 		particles[particlePos.x, particlePos.y].fluidHVel = 0;
 	}
+	bool DisperseParticle(Vector2Int particlePos, ParticleObject particleObject, sbyte dir)
+	{
+		//dir = (sbyte)Mathf.Clamp(dir, -1, 1);
+		sbyte i;
+		for (i = 1; i <= particleObject.dispersionSpeed; i++)
+		{
+			if (!CheckForAnyParticle(new Vector2Int(particlePos.x + i * dir, particlePos.y)))
+			{
+				continue;
+			}
+			else
+			{
+				if (i == 1)
+				{
+					return false;
+				}
+				MoveLiquidParticle(particlePos, particleObject.type, (sbyte)(dir * (i - 1)));
+				return true;
+			}
+		}
+
+		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + i - dir, particlePos.y)))
+		{
+			MoveLiquidParticle(particlePos, particleObject.type, (sbyte)(dir * (i - 1)));
+			return true;
+		}
+		else
+		{
+			UpdateSurroundingChunks(particlePos.x, particlePos.y);
+			return false;
+		}
+	}
 
 	bool CheckParticleDown(Vector2Int particlePos, ParticleObject particleObject)
 	{
@@ -633,12 +665,14 @@ public class ParticleLogic : MonoBehaviour
 			UpdateSurroundingChunks(particlePos.x, particlePos.y);
 		}
 
-		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + lastVelocity, particlePos.y)))
-		{
-			MoveLiquidParticle(particlePos, particleObject.type, lastVelocity);
-			return true;
-		}
-		return false;
+		return DisperseParticle(particlePos, particleObject, lastVelocity);
+
+		//if (!CheckForAnyParticle(new Vector2Int(particlePos.x + lastVelocity, particlePos.y)))
+		//{
+		//	MoveLiquidParticle(particlePos, particleObject.type, lastVelocity);
+		//	return true;
+		//}
+		//return false;
 	}
 	bool CheckParticleRandomVelocity(Vector2Int particlePos, ParticleObject particleObject)
 	{
@@ -667,12 +701,14 @@ public class ParticleLogic : MonoBehaviour
 			UpdateSurroundingChunks(particlePos.x, particlePos.y);
 		}
 
-		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + randomVelocity, particlePos.y)))
-		{
-			MoveLiquidParticle(particlePos, particleObject.type, randomVelocity);
-			return true;
-		}
-		return false;
+		return DisperseParticle(particlePos, particleObject, randomVelocity);
+
+		//if (!CheckForAnyParticle(new Vector2Int(particlePos.x + randomVelocity, particlePos.y)))
+		//{
+		//	MoveLiquidParticle(particlePos, particleObject.type, randomVelocity);
+		//	return true;
+		//}
+		//return false;
 	}
 	bool CheckParticleRight(Vector2Int particlePos, ParticleObject particleObject)
 	{
@@ -694,35 +730,14 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 
-		//int i;
-		//for (i = 1; i <= particleObject.dispersionSpeed - 1; i++)
+		return DisperseParticle(particlePos, particleObject, 1);
+
+		//if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y)))
 		//{
-		//	if (!CheckForAnyParticle(new Vector2Int(particlePos.x + i, particlePos.y)) &&
-		//		!CheckForParticle(particleObject.type, new Vector2Int(particlePos.x + i, particlePos.y)))
-		//	{
-		//		Debug.Log(i + " " + new Vector2Int(particlePos.x + i, particlePos.y));
-		//		continue;
-		//	}
-		//	else
-		//	{
-		//		if (i == 1){
-		//			return false;
-		//		}
-		//		Debug.Log("cannot move right anymore. particle in the way is " + ParticleObjectFromIndex(particlePos.x + i, particlePos.y).type);
-		//		MoveLiquidParticle(particlePos, particleObject.type, (sbyte)(i - 1));
-		//		return true;
-		//	}
+		//	MoveLiquidParticle(particlePos, particleObject.type, 1);
+		//	return true;
 		//}
-
-		//MoveLiquidParticle(particlePos, particleObject.type, (sbyte)i);
-		//return true;
-
-		if (!CheckForAnyParticle(new Vector2Int(particlePos.x + 1, particlePos.y)))
-		{
-			MoveLiquidParticle(particlePos, particleObject.type, 1);
-			return true;
-		}
-		return false;
+		//return false;
 	}
 	bool CheckParticleLeft(Vector2Int particlePos, ParticleObject particleObject)
 	{
@@ -744,12 +759,14 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 
-		if (!CheckForAnyParticle(new Vector2Int(particlePos.x - 1, particlePos.y)))
-		{
-			MoveLiquidParticle(particlePos, particleObject.type, -1);
-			return true;
-		}
-		return false;
+		return DisperseParticle(particlePos, particleObject, -1);
+
+		//if (!CheckForAnyParticle(new Vector2Int(particlePos.x - 1, particlePos.y)))
+		//{
+		//	MoveLiquidParticle(particlePos, particleObject.type, -1);
+		//	return true;
+		//}
+		//return false;
 	}
 	bool CheckParticleUp(Vector2Int particlePos, ParticleObject particleObject)
 	{
