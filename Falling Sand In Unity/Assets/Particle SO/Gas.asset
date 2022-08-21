@@ -17,8 +17,7 @@ MonoBehaviour:
   primaryColor: {r: 0.42539036, g: 0.6320754, b: 0.27071908, a: 1}
   secondaryColor: {r: 0.38101864, g: 0.568, b: 0.2434286, a: 1}
   waitFrames: 1
-  globalMoveChance: 1
-  dispersionSpeed: 1
+  dispersionSpeed: 5
   corrosionSettings:
     resistance: 0
     strength: 0
@@ -46,5 +45,5 @@ MonoBehaviour:
     movementChance: 1
     continueIfFailed: 0
   - moveDirection: 7
-    movementChance: 1
+    movementChance: 0.222
     continueIfFailed: 0

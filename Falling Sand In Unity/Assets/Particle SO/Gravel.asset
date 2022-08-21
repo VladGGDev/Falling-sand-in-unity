@@ -10,20 +10,19 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Dispersion test
+  m_Name: Gravel
   m_EditorClassIdentifier: 
   type: 8
-  particleName: test
-  primaryColor: {r: 0.107547104, g: 0.6459051, b: 1, a: 1}
-  secondaryColor: {r: 0.10588235, g: 0.5930186, b: 1, a: 1}
+  particleName: Gravel
+  primaryColor: {r: 0.8, g: 0.7994727, b: 0.7529412, a: 1}
+  secondaryColor: {r: 0.7152941, g: 0.7310013, b: 0.76, a: 1}
   waitFrames: 0
-  globalMoveChance: 1
-  dispersionSpeed: 10
+  dispersionSpeed: 1
   corrosionSettings:
-    resistance: 0
+    resistance: 0.48
     strength: 0
     chance: 0
   moveChecks:
-  - moveDirection: 5
+  - moveDirection: 0
     movementChance: 1
     continueIfFailed: 0

@@ -20,11 +20,6 @@ public class ParticleObject : ScriptableObject
 	//[Tooltip("If the density of a particle is bigger than the density of another, it will pass through.\n" +
 	//	"If the densities are equal, the particles will interract normally.")]
 	//public int density = 0;
-	[Range(0, 1f)]
-	[Tooltip("This check happens before trying to move.\n" +
-		"The particle has a chance to not move at all.\n" +
-		"Useful for diminishing cases where the particles form strange towers.")]
-	public float globalMoveChance = 1f;
 
 	[Tooltip("How fast will liquids spread.\nHigher values will not form lumps.")]
 	public int dispersionSpeed = 1;

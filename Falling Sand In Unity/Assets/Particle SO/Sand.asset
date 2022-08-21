@@ -17,14 +17,14 @@ MonoBehaviour:
   primaryColor: {r: 1, g: 0.8712673, b: 0.135849, a: 1}
   secondaryColor: {r: 1, g: 0.80487394, b: 0.16199994, a: 1}
   waitFrames: 0
-  globalMoveChance: 0.9
+  dispersionSpeed: 1
   corrosionSettings:
-    resistance: 0
+    resistance: 0.16
     strength: 0
     chance: 0
   moveChecks:
   - moveDirection: 0
-    movementChance: 1
+    movementChance: 0.942
     continueIfFailed: 0
   - moveDirection: 1
     movementChance: 0.837

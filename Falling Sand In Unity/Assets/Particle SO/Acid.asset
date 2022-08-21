@@ -14,15 +14,14 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 7
   particleName: Acid
-  primaryColor: {r: 0.37152755, g: 1, b: 0, a: 1}
-  secondaryColor: {r: 0.06577504, g: 1, b: 0, a: 1}
+  primaryColor: {r: 0.37254903, g: 1, b: 0, a: 1}
+  secondaryColor: {r: 0.06666667, g: 1, b: 0, a: 1}
   waitFrames: 0
-  globalMoveChance: 0.981
   dispersionSpeed: 1
   corrosionSettings:
     resistance: 1
     strength: 0.5
-    chance: 0.492
+    chance: 0.5
   moveChecks:
   - moveDirection: 0
     movementChance: 1
@@ -46,5 +45,5 @@ MonoBehaviour:
     movementChance: 1
     continueIfFailed: 0
   - moveDirection: 7
-    movementChance: 0.1
+    movementChance: 0.553
     continueIfFailed: 0
