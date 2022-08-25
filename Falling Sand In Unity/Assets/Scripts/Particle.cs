@@ -14,4 +14,6 @@ public class Particle
 	public bool hasBeenUpdated = false;
 	public sbyte fluidHVel = 0;
 	public int framesWaited = 0;
+	public int freshSpread = 0;
+	public int lifeTime = 0;
 }	

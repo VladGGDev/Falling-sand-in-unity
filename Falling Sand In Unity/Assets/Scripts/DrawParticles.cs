@@ -33,6 +33,7 @@ public class DrawParticles : MonoBehaviour
 		Vector2Int gridMousePos = new Vector2Int((int)(mousePos.x * particleLogic.simWidth), (int)(mousePos.y * particleLogic.simHeight));
 
 		GetAlphaInput();
+		GetScrollInput();
 
 		if (Input.GetMouseButton(0))
 		{
@@ -42,13 +43,13 @@ public class DrawParticles : MonoBehaviour
 				{
 					for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
 					{
-						particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x + x, gridMousePos.y + y), false);
+						particleLogic.CreateParticle(particleObjects[numKeyPressed].type, gridMousePos.x + x, gridMousePos.y + y, false);
 					}
 				}
 			}
 			else
 			{
-				particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(gridMousePos.x, gridMousePos.y), false);
+				particleLogic.CreateParticle(particleObjects[numKeyPressed].type, gridMousePos.x, gridMousePos.y, false);
 			}
 
 			//previousMousePos = currentMousePos;
@@ -65,13 +66,13 @@ public class DrawParticles : MonoBehaviour
 				{
 					for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
 					{
-						particleLogic.DeleteParticle(new Vector2Int(gridMousePos.x + x, gridMousePos.y + y));
+						particleLogic.DeleteParticle(gridMousePos.x + x, gridMousePos.y + y);
 					}
 				}
 			}
 			else
 			{
-				particleLogic.DeleteParticle(new Vector2Int(gridMousePos.x, gridMousePos.y));
+				particleLogic.DeleteParticle(gridMousePos.x, gridMousePos.y);
 			}
 		}
 
@@ -81,7 +82,7 @@ public class DrawParticles : MonoBehaviour
 			{
 				for (int x = 0; x < particleLogic.particles.GetLength(0); x++)
 				{
-					particleLogic.DeleteParticle(new Vector2Int(x, y));
+					particleLogic.DeleteParticle(x, y);
 				}
 			}
 		}
@@ -129,78 +130,29 @@ public class DrawParticles : MonoBehaviour
 		{
 			numKeyPressed = 9;
 		}
+		else
+		{
+			return;
+		}
+
+		numKeyPressed = (byte)Mathf.Clamp(numKeyPressed, 0, 9);
+	}
+
+	void GetScrollInput()
+	{
+		if(Input.mouseScrollDelta.y < 0 && numKeyPressed != 0)
+		{
+			numKeyPressed--;
+		}
+		else if(Input.mouseScrollDelta.y > 0)
+		{
+			numKeyPressed++;
+		}
+		else
+		{
+			return;
+		}
 
 		numKeyPressed = (byte)Mathf.Clamp(numKeyPressed, 0, particleObjects.Length - 1);
-	}
-
-	void LineDrawing(int x0, int y0, int x1, int y1)
-	{
-
-		int dx = Mathf.Abs(x1 - x0);
-
-		int sx = x0 < x1 ? 1 : -1;
-
-		int dy = -Mathf.Abs(y1 - y0);
-
-		int sy = y0 < y1 ? 1 : -1;
-
-		int error = dx + dy;
-
-
-		while (true)
-		{
-			particleLogic.CreateParticle(particleObjects[numKeyPressed].type, new Vector2Int(-x0, -y0));
-			
-
-			if (x0 == x1 && y0 == y1)
-				break;
-
-			int e2 = 2 * error;
-
-			if (e2 >= dy)
-			{
-
-				if (x0 == x1)
-					break;
-
-				error = error + dy;
-
-				x0 = x0 + sx;
-			}
-
-			if (e2 <= dx)
-			{
-
-
-				if (y0 == y1)
-					break;
-
-				error = error + dx;
-
-				y0 = y0 + sy;
-			}
-		}
-		Debug.Log(x1 + " " + y1 + " type = " + particleObjects[numKeyPressed].type);
-	}
-
-	void DrawCircle(int x, int y, int r)
-	{
-		const float PI = 3.1415926535f;
-		float i, angle, x1, y1;
-
-		for (i = 0; i < 360; i += 0.1f)
-		{
-			angle = i;
-			x1 = r * Mathf.Cos(angle * PI / 180);
-			y1 = r * Mathf.Sin(angle * PI / 180);
-			particleLogic.CreateParticle(particleObjects[numKeyPressed].type,
-				new Vector2Int(Mathf.RoundToInt(x + x1), Mathf.RoundToInt(y + y1)));
-		}
-
-		//bool wasInside = false;
-		for (int j = 0; j < r * r * 2; j++)
-		{
-
-		}
 	}
 }

@@ -21,15 +21,24 @@ public class ParticleObject : ScriptableObject
 	//	"If the densities are equal, the particles will interract normally.")]
 	//public int density = 0;
 
-	[Tooltip("How fast will liquids spread.\nHigher values will not form lumps.")]
-	public int dispersionSpeed = 1;
+	[Tooltip("The minimum distance the liquid will spread.\nA lower value than the max or simply 1 should be here.")]
+	public int dispersionSpeedMin = 1;
+	[Tooltip("The maximum distance the liquid will spread.\nHigher values will not form lumps.")]
+	public int dispersionSpeedMax = 1;
 
-	[Space(10)]
+	[Space(15)]
+	public ParticleLife lifeSettings;
+
+	[Space(15)]
 	public ParticleCorrosion corrosionSettings;
 
 	[Space(15)]
 	[Tooltip("The particle will check in the order of the elements in this array if it can move.")]
 	public ParticleMoveChecks[] moveChecks = new ParticleMoveChecks[4];
+
+	[Space(10)]
+	[Tooltip("After the particle moves, it will try to spread around.")]
+	public ParticleSpread spreadSettings;
 }
 
 [System.Serializable]
@@ -49,9 +58,9 @@ public class ParticleMoveChecks
 		RandomUpDiagonal,
 		UpRight,
 		UpLeft,
-		//CrossAround,
-		//XAround,
-		//EightAround
+		PlusRandom,
+		XRandom,
+		EightRandom
 	}
 
 	[Tooltip("Choose the particle movement direction.")]
@@ -79,4 +88,39 @@ public class ParticleCorrosion
 	[Range(0, 1f)]
 	[Tooltip("The chance to corode.")]
 	public float chance = 0;
+}
+
+[System.Serializable]
+public class ParticleSpread
+{
+	[Range(0, 1f)]
+	[Tooltip("The resistance to spread of a particle.")]
+	public float resistance = 0;
+	[Range(0, 1f)]
+	[Tooltip("The strength of the spread.\n" +
+		"If the strength is less than the resistance of the other particle, it will not spread to it.")]
+	public float strength = 0;
+	[Range(0, 1f)]
+	[Tooltip("The chance to spread.")]
+	public float chance = 0;
+	[Tooltip("The color this particle will have when it first spreads.\nSet alpha to 0 to use the main colors.")]
+	public Color freshSpreadColor = Color.clear;
+	[Tooltip("For how many frames this particle will be considered fresh.")]
+	public int freshForFrames = 1;
+	[Tooltip("Can this particle spread to air?")]
+	public bool canSpreadToAir = false;
+}
+
+[System.Serializable]
+public class ParticleLife
+{
+	[Tooltip("Will this particle live forever?")]
+	public bool liveForever = true;
+	[Tooltip("For how many frames should this particle be alive if the particle doesn't live forever.")]
+	public int minLifeTime = 300;
+	[Tooltip("For how many frames should this particle be alive if the particle doesn't live forever.")]
+	public int maxLifeTime = 1000;
+	[Tooltip("The color of the particle will start changing to this the closer it gets to death.\n" +
+		"Set alpha to 0 to make the colors not change.")]
+	public Color deathColor = Color.clear;
 }

@@ -17,9 +17,15 @@ MonoBehaviour:
   primaryColor: {r: 0.10588236, g: 0.5921569, b: 1, a: 1}
   secondaryColor: {r: 0.09800005, g: 0.5424527, b: 1, a: 1}
   waitFrames: 0
-  dispersionSpeed: 15
+  dispersionSpeedMin: 1
+  dispersionSpeedMax: 5
+  lifeSettings:
+    liveForever: 1
+    minLifeTime: 300
+    maxLifeTime: 1000
+    deathColor: {r: 0, g: 0, b: 0, a: 0}
   corrosionSettings:
-    resistance: 0.339
+    resistance: 1
     strength: 0
     chance: 0
   moveChecks:
@@ -39,11 +45,18 @@ MonoBehaviour:
     movementChance: 1
     continueIfFailed: 0
   - moveDirection: 5
-    movementChance: 1
+    movementChance: 0.606
     continueIfFailed: 0
   - moveDirection: 6
     movementChance: 1
     continueIfFailed: 0
   - moveDirection: 7
-    movementChance: 0.228
+    movementChance: 0.1
     continueIfFailed: 0
+  spreadSettings:
+    resistance: 0
+    strength: 0
+    chance: 0
+    freshSpreadColor: {r: 0, g: 0, b: 0, a: 0}
+    freshForFrames: 1
+    canSpreadToAir: 0
