@@ -391,8 +391,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85f1d8a17025b149805276ed344e5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simWidth: 256
-  simHeight: 256
+  simWidth: 128
+  simHeight: 128
   chunkWidth: 16
   chunkHeight: 16
   chunkDebug: 0

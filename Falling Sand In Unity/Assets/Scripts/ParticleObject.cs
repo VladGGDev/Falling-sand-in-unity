@@ -1,15 +1,16 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.EventSystems;
 
 [CreateAssetMenu(fileName = "New Particle", menuName = "Scriptable Objects/Particle")]
 public class ParticleObject : ScriptableObject
 {
 	[Tooltip("The type of the particle will be used in scripts.\n" +
 		"Each particle must have a unique type (just like an id).")]
-	public byte type;
+	public byte type = 1;
 	[Tooltip("The name is an optional alternative for the type\n")]
-	public string particleName;
+	public string particleName = "New Particle";
 	public Color primaryColor = Color.black;
 	[Tooltip("The secondary color is usually darker.")]
 	public Color secondaryColor = Color.black;
@@ -34,16 +35,32 @@ public class ParticleObject : ScriptableObject
 
 	[Space(15)]
 	[Tooltip("The particle will check in the order of the elements in this array if it can move.")]
-	public ParticleMoveChecks[] moveChecks = new ParticleMoveChecks[4];
+	public ParticleMoveChecks[] moveChecks = new ParticleMoveChecks[] 
+		{new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.Down, 0.94f),
+		new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.RandomDownDiagonal, 0.84f),
+		new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownRight, 0.6f),
+		new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownLeft, 0.86f)};
 
 	[Space(10)]
 	[Tooltip("After the particle moves, it will try to spread around.")]
 	public ParticleSpread spreadSettings;
+
+	private void OnValidate()
+	{
+		if (spreadSettings.freshForFrames < 1 && spreadSettings.strength > 0)
+			spreadSettings.freshForFrames = 1;
+	}
 }
 
 [System.Serializable]
 public class ParticleMoveChecks
 {
+	public ParticleMoveChecks(MoveDirection direction, float chance)
+	{
+		moveDirection = direction;
+		movementChance = chance;
+	}
+
 	public enum MoveDirection
 	{
 		Down,
@@ -103,10 +120,14 @@ public class ParticleSpread
 	[Range(0, 1f)]
 	[Tooltip("The chance to spread.")]
 	public float chance = 0;
-	[Tooltip("The color this particle will have when it first spreads.\nSet alpha to 0 to use the main colors.")]
-	public Color freshSpreadColor = Color.clear;
 	[Tooltip("For how many frames this particle will be considered fresh.")]
 	public int freshForFrames = 1;
+	[Tooltip("The color this particle will have when it first spreads.")]
+	public Color freshSpreadColor = Color.black;
+	[Tooltip("The particle color will interpolate between the normal (at t 0) and the fresh color (at t 1)" +
+		" using the value of the curve as the time component.\n Set all keys to value 0 to not use the fresh color.")]
+	public AnimationCurve freshColorCurve = 
+		new AnimationCurve(new Keyframe[2] { new Keyframe(0, 0, 0, 1f), new Keyframe(1f, 1f, 1f, 0) });
 	[Tooltip("Can this particle spread to air?")]
 	public bool canSpreadToAir = false;
 }
@@ -120,7 +141,10 @@ public class ParticleLife
 	public int minLifeTime = 300;
 	[Tooltip("For how many frames should this particle be alive if the particle doesn't live forever.")]
 	public int maxLifeTime = 1000;
-	[Tooltip("The color of the particle will start changing to this the closer it gets to death.\n" +
-		"Set alpha to 0 to make the colors not change.")]
-	public Color deathColor = Color.clear;
+	[Tooltip("The color of the particle will start changing to this the closer it gets to death.")]
+	public Color deathColor = Color.black;
+	[Tooltip("The particle color will interpolate between the normal (at t 0) and the death color (at t 1)" +
+		" using the value of the curve as the time component.\n Set all keys to value 0 to not use the death color.")]
+	public AnimationCurve deathColorCurve = 
+		new AnimationCurve(new Keyframe[2] { new Keyframe(0, 0, 0, 1f), new Keyframe(1f, 1f, 1f, 0) });
 }

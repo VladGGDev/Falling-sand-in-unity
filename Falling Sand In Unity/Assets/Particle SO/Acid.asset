@@ -17,15 +17,41 @@ MonoBehaviour:
   primaryColor: {r: 0.37254903, g: 1, b: 0, a: 1}
   secondaryColor: {r: 0.06666667, g: 1, b: 0, a: 1}
   waitFrames: 0
-  dispersionSpeed: 2
+  dispersionSpeedMin: 1
+  dispersionSpeedMax: 1
+  lifeSettings:
+    liveForever: 1
+    minLifeTime: 300
+    maxLifeTime: 1000
+    deathColor: {r: 0, g: 0, b: 0, a: 0}
+    deathColorCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
   corrosionSettings:
     resistance: 1
     strength: 0.5
     chance: 0.5
-  spreadSettings:
-    resistance: 0
-    strength: 0
-    chance: 0
   moveChecks:
   - moveDirection: 0
     movementChance: 1
@@ -51,3 +77,34 @@ MonoBehaviour:
   - moveDirection: 7
     movementChance: 0.165
     continueIfFailed: 0
+  spreadSettings:
+    resistance: 0
+    strength: 0
+    chance: 0
+    freshForFrames: 0
+    freshSpreadColor: {r: 0, g: 0, b: 0, a: 0}
+    freshColorCurve:
+      serializedVersion: 2
+      m_Curve:
+      - serializedVersion: 3
+        time: 0
+        value: 0
+        inSlope: 0
+        outSlope: 1
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 1
+        value: 1
+        inSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      m_PreInfinity: 2
+      m_PostInfinity: 2
+      m_RotationOrder: 4
+    canSpreadToAir: 0

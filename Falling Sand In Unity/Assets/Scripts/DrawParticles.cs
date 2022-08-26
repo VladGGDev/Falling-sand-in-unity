@@ -135,7 +135,7 @@ public class DrawParticles : MonoBehaviour
 			return;
 		}
 
-		numKeyPressed = (byte)Mathf.Clamp(numKeyPressed, 0, 9);
+		numKeyPressed = (byte)Mathf.Clamp(numKeyPressed, 0, particleObjects.Length - 1);
 	}
 
 	void GetScrollInput()

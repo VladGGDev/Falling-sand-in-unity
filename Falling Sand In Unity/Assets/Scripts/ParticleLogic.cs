@@ -3,6 +3,7 @@ using System.Collections.Generic;
 using TMPro;
 //using System;
 using UnityEngine;
+using UnityEngine.XR;
 
 public class ParticleLogic : MonoBehaviour
 {
@@ -35,7 +36,7 @@ public class ParticleLogic : MonoBehaviour
 			{
 				particles[x, y] = new Particle();
 				particles[x, y].type = 0;
-				particles[x, y].useSecondColor = Random.value > 0.5f;
+				particles[x, y].useSecondColor = Random.value > 0.499f;
 				particles[x, y].fluidHVel = 0;
 			}
 		}
@@ -124,6 +125,11 @@ public class ParticleLogic : MonoBehaviour
 	#region Helping Functions
 	public bool CheckForParticle(byte type, int x, int y)
 	{
+		if (x < 0 || x > simWidth - 1 || y < 0 || y > simHeight - 1)
+		{
+			return true;
+		}
+
 		if (particles[x, y].type == type)
 		{
 			return true;
@@ -138,7 +144,7 @@ public class ParticleLogic : MonoBehaviour
 	{
 		if(x < 0 || x > simWidth - 1 || y < 0 || y > simHeight - 1)
 		{
-			return false;
+			return true;
 		}
 		//x = Mathf.Clamp(x, 0, simWidth - 1);
 		//y = Mathf.Clamp(y, 0, simHeight - 1);
@@ -197,8 +203,9 @@ public class ParticleLogic : MonoBehaviour
 
 		particles[x, y].type = type;
 		UpdateSurroundingChunksNoCheck(x, y);
-
-		particles[x, y].framesWaited = particleObjects[type - 1].waitFrames; //type - 1 = the index of the particleObject
+		ParticleObject particleObject = ParticleObjectFromIndex(x, y);
+		particles[x, y].framesWaited = particleObject.waitFrames;
+		particles[x, y].freshSpread = particleObject.spreadSettings.freshForFrames;
 	}
 	public void CreateParticle(byte type, int x, int y, bool wait)
 	{
@@ -211,10 +218,11 @@ public class ParticleLogic : MonoBehaviour
 
 		particles[x, y].type = type;
 		UpdateSurroundingChunksNoCheck(x, y);
-
+		ParticleObject particleObject = ParticleObjectFromIndex(x, y);
+		particles[x, y].freshSpread = particleObject.spreadSettings.freshForFrames;
 		if (!wait)
 			return;
-		particles[x, y].framesWaited = particleObjects[type - 1].waitFrames; //type - 1 = the index of the particleObject
+		particles[x, y].framesWaited = particleObject.waitFrames;
 	}
 
 	public void SetParticleUpdateStatus(int x, int y, bool status)
@@ -249,6 +257,8 @@ public class ParticleLogic : MonoBehaviour
 			{
 				if (particles[x, y].hasBeenUpdated)
 				{
+					if (x == 0 && y == 0)
+						Debug.Log("Particle at 0, 0 has been updated");
 					continue;
 				}
 				if (particles[x, y].type == 0)
@@ -261,16 +271,15 @@ public class ParticleLogic : MonoBehaviour
 					UpdateSurroundingChunks(x, y);
 					continue;
 				}
-				//if (Random.value > ParticleObjectFromIndex(x, y).globalMoveChance)
-				//{
-				//	UpdateSurroundingChunks(x, y);
-				//	continue;
-				//}
 				if(!WasChunkUpdated(x, y))
 				{
 					x += chunkWidth - 1;
+					if (x == 0 && y == 0)
+						Debug.Log("Particle at 0, 0 has been updated");
 					continue;
 				}
+
+				ParticleObject currentParticleObject = ParticleObjectFromIndex(x, y);
 
 				//Check for every movement check for this particle object
 				foreach (ParticleMoveChecks check in particleObjects[particles[x, y].type - 1].moveChecks)
@@ -283,7 +292,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleDown(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleDown(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}	
 					}
@@ -295,7 +304,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleRandomDownDiagonal(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleRandomDownDiagonal(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -307,7 +316,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleDownRight(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleDownRight(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -319,7 +328,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleDownLeft(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleDownLeft(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -331,7 +340,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleTowardsVelocity(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleTowardsVelocity(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -343,7 +352,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleRandomVelocity(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleRandomVelocity(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -355,7 +364,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleRight(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleRight(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -367,7 +376,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleLeft(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleLeft(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -379,7 +388,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleUp(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleUp(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -391,7 +400,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleRandomUpDiagonal(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleRandomUpDiagonal(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -403,7 +412,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleUpRight(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleUpRight(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -415,7 +424,7 @@ public class ParticleLogic : MonoBehaviour
 							}
 						}
 						else{
-							if (CheckParticleUpLeft(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleUpLeft(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -447,7 +456,7 @@ public class ParticleLogic : MonoBehaviour
 						}
 						else
 						{
-							if (CheckParticleXRandom(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleXRandom(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
@@ -463,10 +472,21 @@ public class ParticleLogic : MonoBehaviour
 						}
 						else
 						{
-							if (CheckParticleEightRandom(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+							if (CheckParticleEightRandom(new Vector2Int(x, y), currentParticleObject))
 								break;
 						}
 					}
+				}
+
+				//Spread the particle
+				if(currentParticleObject.spreadSettings.strength > 0)
+				{
+					if (particles[x, y].freshSpread > 0)
+					{
+						UpdateSurroundingChunksNoCheck(x, y);
+						particles[x, y].freshSpread--;
+					}
+					SpreadParticle(new Vector2Int(x, y), currentParticleObject);
 				}
 			}
 		}
@@ -517,21 +537,41 @@ public class ParticleLogic : MonoBehaviour
 				continue;
 			}
 
-			SetParticleUpdateStatus(ix, iy, false);
-
 			if (!WasChunkUpdated(ix, iy) && !chunkDebug)
 			{
 				i += chunkWidth - 1;
 				continue;
 			}
 
+			SetParticleUpdateStatus(ix, iy, false);
+
+			ParticleObject particleObject = ParticleObjectFromIndex(ix, iy);
+			ParticleSpread spread = particleObject.spreadSettings;
 			if (particles[ix, iy].useSecondColor)
 			{
-				particleColors[i] = ParticleObjectFromIndex(ix, iy).secondaryColor;
+				if (particles[ix, iy].freshSpread > 0)
+				{
+					particleColors[i] =
+						Color.Lerp(particleObject.secondaryColor, spread.freshSpreadColor,
+						spread.freshColorCurve.Evaluate((float)particles[ix, iy].freshSpread / (float)spread.freshForFrames));
+				}
+				else
+				{
+					particleColors[i] = particleObject.secondaryColor;
+				}
 			}
 			else
 			{
-				particleColors[i] = ParticleObjectFromIndex(ix, iy).primaryColor;
+				if (particles[ix, iy].freshSpread > 0)
+				{
+					particleColors[i] =
+						Color.Lerp(particleObject.primaryColor, spread.freshSpreadColor,
+						spread.freshColorCurve.Evaluate((float)particles[ix, iy].freshSpread / (float)spread.freshForFrames));
+				}
+				else
+				{
+					particleColors[i] = particleObject.primaryColor;
+				}
 			}
 		}
 		StartCoroutine(ApplyTextureToMaterial());
@@ -550,12 +590,22 @@ public class ParticleLogic : MonoBehaviour
 	void MoveParticle(Vector2Int particlePos, byte type, Vector2Int dir)
 	{
 		CreateParticle(type, particlePos.x + dir.x, particlePos.y + dir.y);
+		if (particleObjects[type - 1].spreadSettings.strength > 0)
+		{
+			particles[particlePos.x + dir.x, particlePos.y + dir.y].freshSpread =
+				particles[particlePos.x, particlePos.y].freshSpread - 1;
+		}
 		DeleteParticle(particlePos.x, particlePos.y);
 		SetParticleUpdateStatus(particlePos.x + dir.x, particlePos.y + dir.y, true);
 	}
 	void MoveLiquidParticle(Vector2Int particlePos, byte type, sbyte velocity)
 	{
 		CreateParticle(type, particlePos.x + velocity, particlePos.y);
+		if (particleObjects[type - 1].spreadSettings.strength > 0)
+		{
+			particles[particlePos.x + velocity, particlePos.y].freshSpread =
+				particles[particlePos.x, particlePos.y].freshSpread - 1;
+		}
 		DeleteParticle(particlePos.x, particlePos.y);
 		SetParticleUpdateStatus(particlePos.x + velocity, particlePos.y, true);
 		particles[Mathf.Clamp(particlePos.x + velocity, 0, simWidth - 1), particlePos.y].fluidHVel =
@@ -630,7 +680,7 @@ public class ParticleLogic : MonoBehaviour
 		{
 			return false;
 		}
-		sbyte randDir = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
+		sbyte randDir = Random.value > 0.499f ? (sbyte)1 : (sbyte)-1;
 		if (particlePos.x == simWidth - 1 && randDir > 0)
 		{
 			return false;
@@ -719,7 +769,7 @@ public class ParticleLogic : MonoBehaviour
 	}
 	bool CheckParticleRandomVelocity(Vector2Int particlePos, ParticleObject particleObject)
 	{
-		sbyte randomVelocity = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
+		sbyte randomVelocity = Random.value > 0.499f ? (sbyte)1 : (sbyte)-1;
 
 		if (particlePos.x == 0 && randomVelocity < 0)
 		{
@@ -833,7 +883,7 @@ public class ParticleLogic : MonoBehaviour
 			return false;
 		}
 
-		sbyte dir = Random.value > 0.5f ? (sbyte)1 : (sbyte)-1;
+		sbyte dir = Random.value > 0.499f ? (sbyte)1 : (sbyte)-1;
 
 		if (!CheckForAnyParticle(particlePos.x + dir, particlePos.y + 1))
 		{
@@ -887,43 +937,31 @@ public class ParticleLogic : MonoBehaviour
 		{
 			return false;
 		}
+		
+		byte rand;
 
-		while (true)
+		for (byte i = 0; i < 4; i++)
 		{
-			byte rand = (byte)Random.Range(0, 4);
+			rand = (byte)Random.Range(0, 4);
+
 			if(rand == 0)
 			{
-				if (CheckForAnyParticle(particlePos.x, particlePos.y + 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(0, 1));
-					return true;
-				}
+				return CheckParticleUp(particlePos, particleObject);
 			}
 			else if (rand == 1)
 			{
-				if (CheckForAnyParticle(particlePos.x + 1, particlePos.y))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(1, 0));
-					return true;
-				}
+				return CheckParticleRight(particlePos, particleObject);
 			}
 			else if (rand == 2)
 			{
-				if (CheckForAnyParticle(particlePos.x, particlePos.y - 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(0, -1));
-					return true;
-				}
+				return CheckParticleDown(particlePos, particleObject);
 			}
 			else if (rand == 3)
 			{
-				if (CheckForAnyParticle(particlePos.x - 1, particlePos.y))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(-1, 0));
-					return true;
-				}
+				return CheckParticleLeft(particlePos, particleObject);
 			}
 		}
+		return false;
 	}
 	bool CheckParticleXRandom(Vector2Int particlePos, ParticleObject particleObject)
 	{
@@ -935,42 +973,29 @@ public class ParticleLogic : MonoBehaviour
 			return false;
 		}
 
-		while (true)
+		byte rand;
+
+		for(byte i = 0; i < 4; i++)
 		{
-			byte rand = (byte)Random.Range(0, 4);
+			rand = (byte)Random.Range(0, 4);
 			if (rand == 0)
 			{
-				if (CheckForAnyParticle(particlePos.x + 1, particlePos.y + 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(1, 1));
-					return true;
-				}
+				return CheckParticleUpRight(particlePos, particleObject);
 			}
 			else if (rand == 1)
 			{
-				if (CheckForAnyParticle(particlePos.x + 1, particlePos.y - 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(1, -1));
-					return true;
-				}
+				return CheckParticleDownRight(particlePos, particleObject);
 			}
 			else if (rand == 2)
 			{
-				if (CheckForAnyParticle(particlePos.x - 1, particlePos.y - 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(-1, -1));
-					return true;
-				}
+				return CheckParticleDownLeft(particlePos, particleObject);
 			}
 			else if (rand == 3)
 			{
-				if (CheckForAnyParticle(particlePos.x - 1, particlePos.y + 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(-1, 1));
-					return true;
-				}
+				return CheckParticleUpLeft(particlePos, particleObject);
 			}
 		}
+		return false;
 	}
 	bool CheckParticleEightRandom(Vector2Int particlePos, ParticleObject particleObject)
 	{
@@ -979,72 +1004,122 @@ public class ParticleLogic : MonoBehaviour
 			return false;
 		}
 
-		while (true)
+		byte rand;
+
+		for (byte i = 0; i < 4; i++)
 		{
-			byte rand = (byte)Random.Range(0, 8);
+			rand = (byte)Random.Range(0, 8);
 			if (rand == 0)
 			{
-				if (CheckForAnyParticle(particlePos.x, particlePos.y + 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(0, 1));
-					return true;
-				}
+				return CheckParticleUp(particlePos, particleObject);
 			}
 			else if (rand == 1)
 			{
-				if (CheckForAnyParticle(particlePos.x + 1, particlePos.y))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(1, 0));
-					return true;
-				}
+				return CheckParticleRight(particlePos, particleObject);
 			}
 			else if (rand == 2)
 			{
-				if (CheckForAnyParticle(particlePos.x, particlePos.y - 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(0, -1));
-					return true;
-				}
+				return CheckParticleDown(particlePos, particleObject);
 			}
 			else if (rand == 3)
 			{
-				if (CheckForAnyParticle(particlePos.x - 1, particlePos.y))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(-1, 0));
-					return true;
-				}
+				return CheckParticleLeft(particlePos, particleObject);
 			}
-			else if (rand == 4)
+			if (rand == 4)
 			{
-				if (CheckForAnyParticle(particlePos.x + 1, particlePos.y + 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(1, 1));
-					return true;
-				}
+				return CheckParticleUpRight(particlePos, particleObject);
 			}
 			else if (rand == 5)
 			{
-				if (CheckForAnyParticle(particlePos.x + 1, particlePos.y - 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(1, -1));
-					return true;
-				}
+				return CheckParticleDownRight(particlePos, particleObject);
 			}
 			else if (rand == 6)
 			{
-				if (CheckForAnyParticle(particlePos.x - 1, particlePos.y - 1))
-				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(-1, -1));
-					return true;
-				}
+				return CheckParticleDownLeft(particlePos, particleObject);
 			}
 			else if (rand == 7)
 			{
-				if (CheckForAnyParticle(particlePos.x - 1, particlePos.y + 1))
+				return CheckParticleUpLeft(particlePos, particleObject);
+			}
+		}
+		return false;
+	}
+	void SpreadParticle(Vector2Int particlePos, ParticleObject particleObject)
+	{
+		if (CheckForParticle(particleObject.type, particlePos.x, particlePos.y + 1)
+			&& CheckForParticle(particleObject.type, particlePos.x, particlePos.y - 1)
+			&& CheckForParticle(particleObject.type, particlePos.x + 1, particlePos.y)
+			&& CheckForParticle(particleObject.type, particlePos.x - 1, particlePos.y)
+			&& CheckForParticle(particleObject.type, particlePos.x + 1, particlePos.y + 1)
+			&& CheckForParticle(particleObject.type, particlePos.x - 1, particlePos.y + 1)
+			&& CheckForParticle(particleObject.type, particlePos.x + 1, particlePos.y - 1)
+			&& CheckForParticle(particleObject.type, particlePos.x - 1, particlePos.y - 1))
+		{
+			return;
+		}
+
+		UpdateSurroundingChunks(particlePos.x, particlePos.y);
+
+		byte rand;
+		Vector2Int dir = Vector2Int.zero;
+
+		for (byte i = 0; i < 4; i++)
+		{
+			rand = (byte)Random.Range(0, 8);
+
+			if (rand == 0){
+				dir = new Vector2Int(0, 1);
+			}
+			else if (rand == 1){
+				dir = new Vector2Int(0, -1);
+			}
+			else if (rand == 2){
+				dir = new Vector2Int(1, 0);
+			}
+			else if (rand == 3){
+				dir = new Vector2Int(-1, 0);
+			}
+			if (rand == 4)
+			{
+				dir = new Vector2Int(1, 1);
+			}
+			else if (rand == 5)
+			{
+				dir = new Vector2Int(1, -1);
+			}
+			else if (rand == 6)
+			{
+				dir = new Vector2Int(-1, 1);
+			}
+			else if (rand == 7)
+			{
+				dir = new Vector2Int(-1, -1);
+			}
+
+			Vector2Int newPosition = new Vector2Int(Mathf.Clamp(particlePos.x + dir.x, 0, simWidth - 1),
+					Mathf.Clamp(particlePos.y + dir.y, 0, simHeight - 1));
+
+			if (CheckForParticle(particleObject.type, newPosition.x, newPosition.y))
+			{
+				continue;
+			}
+			else
+			{
+				if (!particleObject.spreadSettings.canSpreadToAir
+					&& CheckForParticle(0, newPosition.x, newPosition.y))
 				{
-					MoveParticle(particlePos, particleObject.type, new Vector2Int(-1, 1));
-					return true;
+					continue;
 				}
+			}
+
+			ParticleSpread spread = particleObject.spreadSettings;
+			float chance =
+				(spread.strength - 
+				ParticleObjectFromIndex(newPosition.x, newPosition.y).spreadSettings.resistance) *
+				spread.chance;
+			if (Random.value < chance)
+			{
+				CreateParticle(particleObject.type, newPosition.x, newPosition.y);
 			}
 		}
 	}
