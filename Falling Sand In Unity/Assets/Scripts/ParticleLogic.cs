@@ -189,6 +189,8 @@ public class ParticleLogic : MonoBehaviour
 
 		particles[x, y].type = 0;
 		particles[x, y].framesWaited = 0;
+		particles[x, y].freshSpread = 0;
+		particles[x, y].lifeTime = 0;
 		UpdateSurroundingChunksNoCheck(x, y);
 	}
 
@@ -206,6 +208,8 @@ public class ParticleLogic : MonoBehaviour
 		ParticleObject particleObject = ParticleObjectFromIndex(x, y);
 		particles[x, y].framesWaited = particleObject.waitFrames;
 		particles[x, y].freshSpread = particleObject.spreadSettings.freshForFrames;
+		particles[x, y].lifeTime = 
+			Random.Range(particleObject.lifeSettings.minLifeTime, particleObject.lifeSettings.maxLifeTime + 1);
 	}
 	public void CreateParticle(byte type, int x, int y, bool wait)
 	{
@@ -220,6 +224,8 @@ public class ParticleLogic : MonoBehaviour
 		UpdateSurroundingChunksNoCheck(x, y);
 		ParticleObject particleObject = ParticleObjectFromIndex(x, y);
 		particles[x, y].freshSpread = particleObject.spreadSettings.freshForFrames;
+		particles[x, y].lifeTime =
+			Random.Range(particleObject.lifeSettings.minLifeTime, particleObject.lifeSettings.maxLifeTime + 1);
 		if (!wait)
 			return;
 		particles[x, y].framesWaited = particleObject.waitFrames;
@@ -257,29 +263,35 @@ public class ParticleLogic : MonoBehaviour
 			{
 				if (particles[x, y].hasBeenUpdated)
 				{
-					if (x == 0 && y == 0)
-						Debug.Log("Particle at 0, 0 has been updated");
 					continue;
 				}
 				if (particles[x, y].type == 0)
 				{
 					continue;
 				}
-				if (particles[x, y].framesWaited != 0)
-				{
-					particles[x, y].framesWaited--;
-					UpdateSurroundingChunks(x, y);
-					continue;
-				}
 				if(!WasChunkUpdated(x, y))
 				{
 					x += chunkWidth - 1;
-					if (x == 0 && y == 0)
-						Debug.Log("Particle at 0, 0 has been updated");
 					continue;
 				}
-
+				if (particles[x, y].framesWaited > 0)
+				{
+					particles[x, y].framesWaited--;
+					UpdateSurroundingChunksNoCheck(x, y);
+					continue;
+				}
 				ParticleObject currentParticleObject = ParticleObjectFromIndex(x, y);
+				if (!currentParticleObject.lifeSettings.liveForever && particles[x, y].lifeTime <= 0)
+				{
+					DeleteParticle(x, y);
+					continue;
+				}
+				if (particles[x, y].lifeTime > 0 && !currentParticleObject.lifeSettings.liveForever)
+				{
+					particles[x, y].lifeTime--;
+					UpdateSurroundingChunksNoCheck(x, y);
+				}
+
 
 				//Check for every movement check for this particle object
 				foreach (ParticleMoveChecks check in particleObjects[particles[x, y].type - 1].moveChecks)
@@ -531,15 +543,15 @@ public class ParticleLogic : MonoBehaviour
 				}
 			}
 
-			if (CheckForParticle(0, ix, iy) && !chunkDebug)
-			{
-				particleColors[i] = backGroundColor;
-				continue;
-			}
-
 			if (!WasChunkUpdated(ix, iy) && !chunkDebug)
 			{
 				i += chunkWidth - 1;
+				continue;
+			}
+
+			if (CheckForParticle(0, ix, iy) && !chunkDebug)
+			{
+				particleColors[i] = backGroundColor;
 				continue;
 			}
 
@@ -589,26 +601,36 @@ public class ParticleLogic : MonoBehaviour
 	#region Movement Functions
 	void MoveParticle(Vector2Int particlePos, byte type, Vector2Int dir)
 	{
-		CreateParticle(type, particlePos.x + dir.x, particlePos.y + dir.y);
+		Vector2Int newPos = new Vector2Int(particlePos.x + dir.x, particlePos.y + dir.y);
+		CreateParticle(type, newPos.x, newPos.y);
 		if (particleObjects[type - 1].spreadSettings.strength > 0)
 		{
-			particles[particlePos.x + dir.x, particlePos.y + dir.y].freshSpread =
+			particles[newPos.x, newPos.y].freshSpread =
 				particles[particlePos.x, particlePos.y].freshSpread - 1;
 		}
+		if (!particleObjects[type - 1].lifeSettings.liveForever)
+		{
+			particles[newPos.x, newPos.y].lifeTime = particles[particlePos.x, particlePos.y].lifeTime - 1;
+		}
 		DeleteParticle(particlePos.x, particlePos.y);
-		SetParticleUpdateStatus(particlePos.x + dir.x, particlePos.y + dir.y, true);
+		SetParticleUpdateStatus(newPos.x, newPos.y, true);
 	}
 	void MoveLiquidParticle(Vector2Int particlePos, byte type, sbyte velocity)
 	{
-		CreateParticle(type, particlePos.x + velocity, particlePos.y);
+		int newX = particlePos.x + velocity;
+		CreateParticle(type, newX, particlePos.y);
 		if (particleObjects[type - 1].spreadSettings.strength > 0)
 		{
-			particles[particlePos.x + velocity, particlePos.y].freshSpread =
+			particles[newX, particlePos.y].freshSpread =
 				particles[particlePos.x, particlePos.y].freshSpread - 1;
 		}
+		if (!particleObjects[type - 1].lifeSettings.liveForever)
+		{
+			particles[newX, particlePos.y].lifeTime = particles[particlePos.x, particlePos.y].lifeTime - 1;
+		}
 		DeleteParticle(particlePos.x, particlePos.y);
-		SetParticleUpdateStatus(particlePos.x + velocity, particlePos.y, true);
-		particles[Mathf.Clamp(particlePos.x + velocity, 0, simWidth - 1), particlePos.y].fluidHVel =
+		SetParticleUpdateStatus(newX, particlePos.y, true);
+		particles[Mathf.Clamp(newX, 0, simWidth - 1), particlePos.y].fluidHVel =
 			(sbyte)System.Math.Sign(velocity);
 		particles[particlePos.x, particlePos.y].fluidHVel = 0;
 	}
@@ -1121,6 +1143,7 @@ public class ParticleLogic : MonoBehaviour
 			{
 				CreateParticle(particleObject.type, newPosition.x, newPosition.y);
 			}
+			return;
 		}
 	}
 	#endregion

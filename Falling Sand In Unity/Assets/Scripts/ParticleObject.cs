@@ -145,6 +145,6 @@ public class ParticleLife
 	public Color deathColor = Color.black;
 	[Tooltip("The particle color will interpolate between the normal (at t 0) and the death color (at t 1)" +
 		" using the value of the curve as the time component.\n Set all keys to value 0 to not use the death color.")]
-	public AnimationCurve deathColorCurve = 
-		new AnimationCurve(new Keyframe[2] { new Keyframe(0, 0, 0, 1f), new Keyframe(1f, 1f, 1f, 0) });
+	public AnimationCurve deathColorCurve = new AnimationCurve(
+		new Keyframe[3] { new Keyframe(0, 0, 0, 0), new Keyframe(0.5f, 0, 0, 2f), new Keyframe(1f, 1f, 2f, 0) });
 }

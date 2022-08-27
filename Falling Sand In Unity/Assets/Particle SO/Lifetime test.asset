@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Spread test
+  m_Name: Lifetime test
   m_EditorClassIdentifier: 
   type: 9
-  particleName: spread test
+  particleName: test
   primaryColor: {r: 1, g: 0, b: 1, a: 1}
   secondaryColor: {r: 0.7904999, g: 0, b: 0.93, a: 1}
   waitFrames: 0
@@ -52,7 +52,10 @@ MonoBehaviour:
     resistance: 0
     strength: 0
     chance: 0
-  moveChecks: []
+  moveChecks:
+  - moveDirection: 14
+    movementChance: 1
+    continueIfFailed: 0
   spreadSettings:
     resistance: 0
     strength: 1
@@ -83,4 +86,4 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    canSpreadToAir: 1
+    canSpreadToAir: 0
