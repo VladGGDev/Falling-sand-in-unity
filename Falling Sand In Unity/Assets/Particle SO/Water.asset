@@ -14,16 +14,43 @@ MonoBehaviour:
   m_EditorClassIdentifier: 
   type: 2
   particleName: Water
-  primaryColor: {r: 0.10588236, g: 0.5921569, b: 1, a: 1}
-  secondaryColor: {r: 0.09800005, g: 0.5424527, b: 1, a: 1}
+  colors:
+    serializedVersion: 2
+    key0: {r: 0.10588236, g: 0.5921569, b: 1, a: 1}
+    key1: {r: 0.098039225, g: 0.5411765, b: 1, a: 1}
+    key2: {r: 0.098039225, g: 0.5411765, b: 1, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 0
+    ctime1: 65535
+    ctime2: 65535
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 0
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
   waitFrames: 0
   dispersionSpeedMin: 1
-  dispersionSpeedMax: 5
-  lifeSettings:
+  dispersionSpeedMax: 16
+  life:
     liveForever: 1
     minLifeTime: 300
     maxLifeTime: 1000
-    deathColor: {r: 0, g: 0, b: 0, a: 0}
+    deathColor: {r: 0, g: 0, b: 0, a: 1}
     deathColorCurve:
       serializedVersion: 2
       m_Curve:
@@ -31,7 +58,16 @@ MonoBehaviour:
         time: 0
         value: 0
         inSlope: 0
-        outSlope: 1
+        outSlope: 0
+        tangentMode: 0
+        weightedMode: 0
+        inWeight: 0
+        outWeight: 0
+      - serializedVersion: 3
+        time: 0.5
+        value: 0
+        inSlope: 0
+        outSlope: 2
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
@@ -39,7 +75,7 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 1
+        inSlope: 2
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -48,10 +84,8 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  corrosionSettings:
-    resistance: 1
-    strength: 0
-    chance: 0
+    createOnDeath: {fileID: 0}
+    chance: 0.5
   moveChecks:
   - moveDirection: 0
     movementChance: 0.963
@@ -63,26 +97,37 @@ MonoBehaviour:
     movementChance: 1
     continueIfFailed: 0
   - moveDirection: 3
-    movementChance: 1
-    continueIfFailed: 0
+    movementChance: 0.79
+    continueIfFailed: 1
   - moveDirection: 4
-    movementChance: 1
-    continueIfFailed: 0
+    movementChance: 0.739
+    continueIfFailed: 1
   - moveDirection: 5
-    movementChance: 0.737
+    movementChance: 1
     continueIfFailed: 0
   - moveDirection: 6
     movementChance: 1
     continueIfFailed: 0
   - moveDirection: 7
-    movementChance: 0.222
+    movementChance: 0.165
     continueIfFailed: 0
-  spreadSettings:
+  passThorugh:
     resistance: 0
     strength: 0
     chance: 0
+  corrosion:
+    resistance: 1
+    strength: 0
+    chance: 0
+  spread:
+    resistance: 0.6
+    strength: 0
+    chance: 0
+    spreadDirection: 2
+    spreadChecks: 4
+    spreadOnce: 1
     freshForFrames: 0
-    freshSpreadColor: {r: 0, g: 0, b: 0, a: 0}
+    freshSpreadColor: {r: 0, g: 1, b: 1, a: 1}
     freshColorCurve:
       serializedVersion: 2
       m_Curve:
@@ -108,3 +153,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     canSpreadToAir: 0
+  collision:
+  - touchingParticle: {fileID: 11400000, guid: 50575ce50fc647d4daa17f22c1a37cfb, type: 2}
+    becomeParticle: {fileID: 11400000, guid: 59adfb76b93de2b4abff91708074f53d, type: 2}
+    chance: 0.255

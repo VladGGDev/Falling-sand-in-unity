@@ -10,28 +10,55 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Lifetime test
+  m_Name: Corruption
   m_EditorClassIdentifier: 
-  type: 9
-  particleName: test
-  primaryColor: {r: 1, g: 0, b: 1, a: 1}
-  secondaryColor: {r: 0.7904999, g: 0, b: 0.93, a: 1}
+  type: 8
+  particleName: Corruption
+  colors:
+    serializedVersion: 2
+    key0: {r: 0.19215688, g: 0.74509805, b: 0.8862746, a: 1}
+    key1: {r: 0.14901961, g: 0.7176471, b: 0.909804, a: 1}
+    key2: {r: 0, g: 0, b: 0, a: 0}
+    key3: {r: 0, g: 0, b: 0, a: 0}
+    key4: {r: 0, g: 0, b: 0, a: 0}
+    key5: {r: 0, g: 0, b: 0, a: 0}
+    key6: {r: 0, g: 0, b: 0, a: 0}
+    key7: {r: 0, g: 0, b: 0, a: 0}
+    ctime0: 32768
+    ctime1: 65535
+    ctime2: 0
+    ctime3: 0
+    ctime4: 0
+    ctime5: 0
+    ctime6: 0
+    ctime7: 0
+    atime0: 0
+    atime1: 65535
+    atime2: 0
+    atime3: 0
+    atime4: 0
+    atime5: 0
+    atime6: 0
+    atime7: 0
+    m_Mode: 1
+    m_NumColorKeys: 2
+    m_NumAlphaKeys: 2
   waitFrames: 0
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
-  lifeSettings:
+  life:
     liveForever: 1
-    minLifeTime: 300
-    maxLifeTime: 1000
-    deathColor: {r: 0, g: 0, b: 0, a: 0}
+    minLifeTime: 50
+    maxLifeTime: 50
+    deathColor: {r: 0, g: 0, b: 0, a: 1}
     deathColorCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
-        outSlope: 1
+        inSlope: 2
+        outSlope: 2
         tangentMode: 0
         weightedMode: 0
         inWeight: 0
@@ -39,7 +66,7 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 1
+        inSlope: 0
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -48,20 +75,26 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-  corrosionSettings:
+    createOnDeath: {fileID: 0}
+    chance: 0.5
+  moveChecks: []
+  passThorugh:
+    resistance: 1
+    strength: 0
+    chance: 0
+  corrosion:
     resistance: 0
     strength: 0
     chance: 0
-  moveChecks:
-  - moveDirection: 14
-    movementChance: 1
-    continueIfFailed: 0
-  spreadSettings:
+  spread:
     resistance: 0
     strength: 1
-    chance: 0.042
+    chance: 0.083
+    spreadDirection: 2
+    spreadChecks: 4
+    spreadOnce: 1
     freshForFrames: 100
-    freshSpreadColor: {r: 0.11852108, g: 0.8207547, b: 0.111498706, a: 1}
+    freshSpreadColor: {r: 1, g: 0.92067146, b: 0, a: 1}
     freshColorCurve:
       serializedVersion: 2
       m_Curve:
@@ -86,4 +119,5 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    canSpreadToAir: 0
+    canSpreadToAir: 1
+  collision: []

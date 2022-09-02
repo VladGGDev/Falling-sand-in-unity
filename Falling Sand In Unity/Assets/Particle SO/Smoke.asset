@@ -10,22 +10,22 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Gas
+  m_Name: Smoke
   m_EditorClassIdentifier: 
-  type: 4
-  particleName: Gas
+  type: 11
+  particleName: Smoke
   colors:
     serializedVersion: 2
-    key0: {r: 0.42352945, g: 0.6313726, b: 0.27058825, a: 1}
-    key1: {r: 0.3803922, g: 0.5686275, b: 0.24313727, a: 1}
+    key0: {r: 0.50980395, g: 0.50980395, b: 0.50980395, a: 1}
+    key1: {r: 0.5647059, g: 0.5647059, b: 0.5647059, a: 1}
     key2: {r: 0, g: 0, b: 0, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 8674
-    ctime1: 58211
+    ctime0: 20046
+    ctime1: 42598
     ctime2: 0
     ctime3: 0
     ctime4: 0
@@ -47,45 +47,45 @@ MonoBehaviour:
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
   life:
-    liveForever: 1
-    minLifeTime: 300
-    maxLifeTime: 1000
-    deathColor: {r: 0, g: 0, b: 0, a: 1}
+    liveForever: 0
+    minLifeTime: 100
+    maxLifeTime: 200
+    deathColor: {r: 1, g: 1, b: 1, a: 1}
     deathColorCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
+        inSlope: 2
+        outSlope: 2
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
-        outWeight: 0
+        outWeight: 0.33333334
       - serializedVersion: 3
         time: 0.5
-        value: 0
-        inSlope: 0
-        outSlope: 2
+        value: 1
+        inSlope: -0.008699711
+        outSlope: -0.008699711
         tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
+        weightedMode: 3
+        inWeight: 0.5416666
+        outWeight: 0.48333335
       - serializedVersion: 3
         time: 1
-        value: 1
-        inSlope: 2
-        outSlope: 0
-        tangentMode: 0
+        value: 0
+        inSlope: -2
+        outSlope: -2
+        tangentMode: 34
         weightedMode: 0
-        inWeight: 0
+        inWeight: 0.33333334
         outWeight: 0
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
     createOnDeath: {fileID: 0}
-    chance: 0.5
+    chance: 0.416
   moveChecks:
   - moveDirection: 8
     movementChance: 0.08
@@ -116,11 +116,11 @@ MonoBehaviour:
     strength: 1
     chance: 1
   corrosion:
-    resistance: 0
+    resistance: 1
     strength: 0
     chance: 0
   spread:
-    resistance: 0
+    resistance: 1
     strength: 0
     chance: 0
     spreadDirection: 2

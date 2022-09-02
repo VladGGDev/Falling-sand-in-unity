@@ -1,12 +1,14 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
 public class ParticleManager : MonoBehaviour
 {
+    public float minParticleStepTime = 0.02f;
+    public ParticleObject airParticleObject;
 	[Tooltip("Pretend this is a button")]
     public bool sortParticlesButton = false;
-    public ParticleObject airParticleObject;
     public ParticleObject[] particleObjects;
     public static ParticleManager instance;
 
@@ -31,7 +33,7 @@ public class ParticleManager : MonoBehaviour
 	{
 		if (sortParticlesButton)
 		{
-            SortParticleObjectTypes(particleObjects);
+			SortParticleObjectTypes(particleObjects);
             MakeParticleTypesConsecutive(particleObjects);
             sortParticlesButton = false;
         }
@@ -58,11 +60,8 @@ public class ParticleManager : MonoBehaviour
     {
         particleObjects[0].type = 1;
 
-        for (byte i = 0; i < particleObjects.Length; i++)
+        for (byte i = 0; i < particleObjects.Length - 1; i++)
         {
-            if (i == particleObjects.Length - 1)
-                break;
-
             if (particleObjects[i].type + 1 != particleObjects[i + 1].type)
             {
                 particleObjects[i + 1].type = (byte)(particleObjects[i].type + 1);

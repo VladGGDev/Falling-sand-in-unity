@@ -10,23 +10,23 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
-  m_Name: Gas
+  m_Name: Fire
   m_EditorClassIdentifier: 
-  type: 4
-  particleName: Gas
+  type: 9
+  particleName: fire
   colors:
     serializedVersion: 2
-    key0: {r: 0.42352945, g: 0.6313726, b: 0.27058825, a: 1}
-    key1: {r: 0.3803922, g: 0.5686275, b: 0.24313727, a: 1}
-    key2: {r: 0, g: 0, b: 0, a: 0}
+    key0: {r: 1, g: 0.8705883, b: 0.21176472, a: 1}
+    key1: {r: 1, g: 0.58548146, b: 0.2117647, a: 1}
+    key2: {r: 1, g: 0.72156864, b: 0.21176472, a: 0}
     key3: {r: 0, g: 0, b: 0, a: 0}
     key4: {r: 0, g: 0, b: 0, a: 0}
     key5: {r: 0, g: 0, b: 0, a: 0}
     key6: {r: 0, g: 0, b: 0, a: 0}
     key7: {r: 0, g: 0, b: 0, a: 0}
-    ctime0: 8674
-    ctime1: 58211
-    ctime2: 0
+    ctime0: 26600
+    ctime1: 32575
+    ctime2: 39321
     ctime3: 0
     ctime4: 0
     ctime5: 0
@@ -41,30 +41,21 @@ MonoBehaviour:
     atime6: 0
     atime7: 0
     m_Mode: 0
-    m_NumColorKeys: 2
+    m_NumColorKeys: 3
     m_NumAlphaKeys: 2
-  waitFrames: 1
+  waitFrames: 0
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
   life:
-    liveForever: 1
-    minLifeTime: 300
-    maxLifeTime: 1000
-    deathColor: {r: 0, g: 0, b: 0, a: 1}
+    liveForever: 0
+    minLifeTime: 25
+    maxLifeTime: 50
+    deathColor: {r: 1, g: 0.96792454, b: 0.5509434, a: 1}
     deathColorCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
-        value: 0
-        inSlope: 0
-        outSlope: 0
-        tangentMode: 0
-        weightedMode: 0
-        inWeight: 0
-        outWeight: 0
-      - serializedVersion: 3
-        time: 0.5
         value: 0
         inSlope: 0
         outSlope: 2
@@ -75,7 +66,7 @@ MonoBehaviour:
       - serializedVersion: 3
         time: 1
         value: 1
-        inSlope: 2
+        inSlope: 0
         outSlope: 0
         tangentMode: 0
         weightedMode: 0
@@ -84,59 +75,41 @@ MonoBehaviour:
       m_PreInfinity: 2
       m_PostInfinity: 2
       m_RotationOrder: 4
-    createOnDeath: {fileID: 0}
-    chance: 0.5
+    createOnDeath: {fileID: 11400000, guid: 59adfb76b93de2b4abff91708074f53d, type: 2}
+    chance: 0.088
   moveChecks:
   - moveDirection: 8
-    movementChance: 0.08
+    movementChance: 0.18
     continueIfFailed: 1
-  - moveDirection: 9
-    movementChance: 0.133
-    continueIfFailed: 1
-  - moveDirection: 10
-    movementChance: 0.34
-    continueIfFailed: 1
-  - moveDirection: 11
-    movementChance: 0.375
-    continueIfFailed: 0
-  - moveDirection: 4
-    movementChance: 1
-    continueIfFailed: 0
-  - moveDirection: 5
-    movementChance: 1
-    continueIfFailed: 0
-  - moveDirection: 6
-    movementChance: 1
-    continueIfFailed: 0
-  - moveDirection: 7
-    movementChance: 0.222
+  - moveDirection: 14
+    movementChance: 0.611
     continueIfFailed: 0
   passThorugh:
     resistance: 0
     strength: 1
     chance: 1
   corrosion:
-    resistance: 0
+    resistance: 1
     strength: 0
     chance: 0
   spread:
-    resistance: 0
-    strength: 0
-    chance: 0
+    resistance: 1
+    strength: 0.59
+    chance: 1
     spreadDirection: 2
     spreadChecks: 4
     spreadOnce: 1
-    freshForFrames: 0
-    freshSpreadColor: {r: 0, g: 1, b: 1, a: 1}
+    freshForFrames: 10
+    freshSpreadColor: {r: 1, g: 0.050943315, b: 0.050943315, a: 1}
     freshColorCurve:
       serializedVersion: 2
       m_Curve:
       - serializedVersion: 3
         time: 0
         value: 0
-        inSlope: 0
+        inSlope: 1
         outSlope: 1
-        tangentMode: 0
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
         outWeight: 0
@@ -144,8 +117,8 @@ MonoBehaviour:
         time: 1
         value: 1
         inSlope: 1
-        outSlope: 0
-        tangentMode: 0
+        outSlope: 1
+        tangentMode: 34
         weightedMode: 0
         inWeight: 0
         outWeight: 0
@@ -153,4 +126,7 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     canSpreadToAir: 0
-  collision: []
+  collision:
+  - touchingParticle: {fileID: 11400000, guid: c8400a5245bbfe644a98a6433b50dcd8, type: 2}
+    becomeParticle: {fileID: 11400000, guid: 59adfb76b93de2b4abff91708074f53d, type: 2}
+    chance: 1

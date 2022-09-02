@@ -1,5 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
+using UnityEditor.PackageManager;
 using UnityEngine;
 
 public class DrawParticles : MonoBehaviour
@@ -8,7 +9,7 @@ public class DrawParticles : MonoBehaviour
 	public ParticleObject[] particleObjects;
 	[Range(0, 30)]
 	public int shiftThickness = 5;
-	byte numKeyPressed = 0;
+	sbyte numKeyPressed = 0;
 	Camera cam;
 	Vector2Int previousMousePos;
 	Vector2Int currentMousePos;
@@ -17,10 +18,7 @@ public class DrawParticles : MonoBehaviour
 	private void Awake()
 	{
 		cam = Camera.main;
-		if (particleObjects.Length > 10)
-		{
-			Debug.LogWarning("You can't draw more than 10 diffrent particles, you don't have more than 10 number keys!");
-		}
+		previousMousePos = currentMousePos;
 	}
 
 	private void Update()
@@ -29,50 +27,74 @@ public class DrawParticles : MonoBehaviour
 		mousePos = new Vector2(
 			Mathf.Clamp(mousePos.x, 0, 1f),
 			Mathf.Clamp(mousePos.y, 0, 1f));
+		
+		Vector2Int gridMousePos = 
+			new Vector2Int((int)(mousePos.x * particleLogic.simWidth), (int)(mousePos.y * particleLogic.simHeight));
 
-		Vector2Int gridMousePos = new Vector2Int((int)(mousePos.x * particleLogic.simWidth), (int)(mousePos.y * particleLogic.simHeight));
+		GetAlphaInput();		
+		if(!(0 > Input.mousePosition.x || 0 > Input.mousePosition.y 
+			|| Screen.width < Input.mousePosition.x || Screen.height < Input.mousePosition.y))
+		{
+			GetScrollThickness();
+			GetScrollInput();
+		}
 
-		GetAlphaInput();
-		GetScrollInput();
+		if(previousMousePos.x == 0 || previousMousePos.x == particleLogic.simWidth
+			 || previousMousePos.y == 0 || previousMousePos.y == particleLogic.simHeight)
+		{
+			previousMousePos = gridMousePos;
+		}
+
+		currentMousePos = gridMousePos;
 
 		if (Input.GetMouseButton(0))
 		{
-			if (Input.GetKey(KeyCode.LeftShift))
+			if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
 			{
 				for (int y = -shiftThickness / 2; y < Mathf.CeilToInt((float)shiftThickness / 2); y++)
 				{
 					for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
 					{
-						particleLogic.CreateParticle(particleObjects[numKeyPressed].type, gridMousePos.x + x, gridMousePos.y + y, false);
+						if (Input.GetKey(KeyCode.LeftControl))
+						{
+							if(x*x + y*y > (shiftThickness/2)*(shiftThickness / 2))
+							{
+								continue;
+							}
+						}
+						lineDrawing(previousMousePos.x + x, previousMousePos.y + y,
+							currentMousePos.x + x, currentMousePos.y + y, true);
 					}
 				}
 			}
 			else
 			{
-				particleLogic.CreateParticle(particleObjects[numKeyPressed].type, gridMousePos.x, gridMousePos.y, false);
+				lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, true);
 			}
-
-			//previousMousePos = currentMousePos;
-			//currentMousePos = gridMousePos;
-			//LineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y);
-
-			//DrawCircle(gridMousePos.x, gridMousePos.y, 10);
 		}
 		if (Input.GetMouseButton(1))
 		{
-			if (Input.GetKey(KeyCode.LeftShift))
+			if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
 			{
 				for (int y = -shiftThickness / 2; y < Mathf.CeilToInt((float)shiftThickness / 2); y++)
 				{
 					for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
 					{
-						particleLogic.DeleteParticle(gridMousePos.x + x, gridMousePos.y + y);
+						if (Input.GetKey(KeyCode.LeftControl))
+						{
+							if (x * x + y * y > (shiftThickness / 2) * (shiftThickness / 2))
+							{
+								continue;
+							}
+						}
+						lineDrawing(previousMousePos.x + x, previousMousePos.y + y,
+							currentMousePos.x + x, currentMousePos.y + y, false);
 					}
 				}
 			}
 			else
 			{
-				particleLogic.DeleteParticle(gridMousePos.x, gridMousePos.y);
+				lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, false);
 			}
 		}
 
@@ -86,6 +108,8 @@ public class DrawParticles : MonoBehaviour
 				}
 			}
 		}
+
+		previousMousePos = currentMousePos;
 	}
 
 	void GetAlphaInput()
@@ -135,12 +159,18 @@ public class DrawParticles : MonoBehaviour
 			return;
 		}
 
-		numKeyPressed = (byte)Mathf.Clamp(numKeyPressed, 0, particleObjects.Length - 1);
+		numKeyPressed = (sbyte)Mathf.Clamp(numKeyPressed, 0, particleObjects.Length - 1);
+		Debug.Log("Selected " + particleObjects[numKeyPressed].name);
 	}
 
 	void GetScrollInput()
 	{
-		if(Input.mouseScrollDelta.y < 0 && numKeyPressed != 0)
+		if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
+		{
+			return;
+		}
+
+		if(Input.mouseScrollDelta.y < 0 && numKeyPressed >= 0)
 		{
 			numKeyPressed--;
 		}
@@ -153,6 +183,82 @@ public class DrawParticles : MonoBehaviour
 			return;
 		}
 
-		numKeyPressed = (byte)Mathf.Clamp(numKeyPressed, 0, particleObjects.Length - 1);
+		numKeyPressed = (sbyte)Mathf.Clamp(numKeyPressed, 0, particleObjects.Length - 1);
+		Debug.Log("Selected " + particleObjects[numKeyPressed].name);
+	}
+
+	void GetScrollThickness()
+	{
+		if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
+		{
+			if (Input.mouseScrollDelta.y < 0 && numKeyPressed >= 0)
+			{
+				shiftThickness--;
+			}
+			else if (Input.mouseScrollDelta.y > 0)
+			{
+				shiftThickness++;
+			}
+			else
+			{
+				return;
+			}
+			shiftThickness = Mathf.Clamp(shiftThickness, 1, 30);
+			Debug.Log("Thickness is now " + shiftThickness);
+		}
+		else
+		{
+			return;
+		}
+	}
+
+	void lineDrawing(int x0, int y0, int x1, int y1, bool create)
+	{
+		int dx = Mathf.Abs(x1 - x0);
+
+		int sx = x0 < x1 ? 1 : -1;
+
+		int dy = -Mathf.Abs(y1 - y0);
+
+		int sy = y0 < y1 ? 1 : -1;
+
+		float error = dx + dy;
+
+
+		while (true)
+		{
+			if (create){
+				particleLogic.CreateParticle(particleObjects[numKeyPressed].type, x0, y0, false);
+			}
+			else{
+				particleLogic.DeleteParticle(x0, y0);
+			}
+
+			if (x0 == x1 && y0 == y1)
+				break;
+
+			float e2 = 2 * error;
+
+			if (e2 >= dy)
+			{
+				if (x0 == x1)
+					break;
+
+				error = error + dy;
+				x0 = x0 + sx;
+
+			}
+
+			if (e2 <= dx)
+			{
+
+				if (y0 == y1) 
+					break;
+
+				error = error + dx;
+				y0 = y0 + sy;
+
+			}
+		}
 	}
 }
