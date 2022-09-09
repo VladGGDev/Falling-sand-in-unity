@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Fire
   m_EditorClassIdentifier: 
   type: 9
-  particleName: fire
   colors:
     serializedVersion: 2
     key0: {r: 1, g: 0.8705883, b: 0.21176472, a: 1}
@@ -43,6 +42,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
+  texture: {fileID: 0}
   waitFrames: 0
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
@@ -96,7 +96,7 @@ MonoBehaviour:
     resistance: 1
     strength: 0.59
     chance: 1
-    spreadDirection: 2
+    spreadDirection: 1
     spreadChecks: 4
     spreadOnce: 1
     freshForFrames: 10

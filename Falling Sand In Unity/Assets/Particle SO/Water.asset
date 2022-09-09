@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Water
   m_EditorClassIdentifier: 
   type: 2
-  particleName: Water
   colors:
     serializedVersion: 2
     key0: {r: 0.10588236, g: 0.5921569, b: 1, a: 1}
@@ -43,6 +42,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  texture: {fileID: 0}
   waitFrames: 0
   dispersionSpeedMin: 1
   dispersionSpeedMax: 16

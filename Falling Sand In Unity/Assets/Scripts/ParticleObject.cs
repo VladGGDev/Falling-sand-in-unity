@@ -1,4 +1,3 @@
-using JetBrains.Annotations;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEditor;
@@ -10,17 +9,15 @@ public class ParticleObject : ScriptableObject
 	[Tooltip("The type of the particle will be used in scripts.\n" +
 		"Each particle must have a unique type (just like an id).")]
 	public byte type = 1;
-	[Tooltip("The name is an optional alternative for the type")]
-	public string particleName = "New Particle";
-	[Tooltip("The colors of the particle.")]
+	[Tooltip("The colors of the particle. The gradient is used to change the proportion of colors")]
 	public Gradient colors;
+	[Tooltip("Instead of using a noise value to determine the color, the particle will use this texture instead.\n" +
+		"Leave empty to use the color gradient from above.")]
+	public Texture2D texture;
 
 	[Space(15)]
 	[Tooltip("How many frames should a particle wait before moving.")]
 	public ushort waitFrames = 0;
-	//[Tooltip("If the density of a particle is bigger than the density of another, it will pass through.\n" +
-	//	"If the densities are equal, the particles will interract normally.")]
-	//public int density = 0;
 
 	[Tooltip("The minimum distance the liquid will spread.\nA lower value than the max or simply 1 should be here.")]
 	public int dispersionSpeedMin = 1;
@@ -215,7 +212,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Sand";
 
 		asset.waitFrames = 0;
 		asset.dispersionSpeedMin = 1;
@@ -277,7 +273,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Water";
 
 		asset.waitFrames = 0;
 		asset.dispersionSpeedMin = 1;
@@ -343,7 +338,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Solid";
 
 		asset.waitFrames = 0;
 		asset.dispersionSpeedMin = 1;
@@ -401,7 +395,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Gas";
 
 		asset.waitFrames = 1;
 		asset.dispersionSpeedMin = 1;
@@ -467,7 +460,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Snow";
 
 		asset.waitFrames = 1;
 		asset.dispersionSpeedMin = 1;
@@ -530,7 +522,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Acid";
 
 		asset.waitFrames = 0;
 		asset.dispersionSpeedMin = 1;
@@ -596,7 +587,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Smoke";
 
 		asset.waitFrames = 1;
 		asset.dispersionSpeedMin = 1;
@@ -665,7 +655,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Corruption";
 
 		asset.waitFrames = 0;
 		asset.dispersionSpeedMin = 1;
@@ -725,7 +714,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Fire";
 
 		asset.waitFrames = 0;
 		asset.dispersionSpeedMin = 1;
@@ -799,7 +787,6 @@ static class ParticleObjectDefaults
 		ParticleObject asset = ScriptableObject.CreateInstance<ParticleObject>();
 
 		asset.type = 1;
-		asset.particleName = "Air";
 
 		asset.waitFrames = 0;
 		asset.dispersionSpeedMin = 0;

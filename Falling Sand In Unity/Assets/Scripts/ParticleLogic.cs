@@ -1,10 +1,6 @@
 using System.Collections;
 using System.Collections.Generic;
-using TMPro;
-//using System;
 using UnityEngine;
-using UnityEngine.UI;
-using UnityEngine.XR;
 
 public class ParticleLogic : MonoBehaviour
 {
@@ -35,7 +31,8 @@ public class ParticleLogic : MonoBehaviour
 
 	private void Start()
 	{
-		particles = new Particle[simWidth, simHeight];	//Instantiate the particle grid
+		//Instantiate the particle grid
+		particles = new Particle[simWidth, simHeight];
 		for (int y = 0; y < particles.GetLength(1); y++)
 		{
 			for (int x = 0; x < particles.GetLength(0); x++)
@@ -54,7 +51,8 @@ public class ParticleLogic : MonoBehaviour
 				gameObject.name, simWidth, simHeight, chunkWidth, chunkHeight);
 			this.enabled = false;
 		}
-		chunks = new Chunk[simWidth / chunkWidth, simHeight / chunkHeight];	//Instanciate the chunk grid
+		//Instanciate the chunk grid
+		chunks = new Chunk[simWidth / chunkWidth, simHeight / chunkHeight];
 		simChunkWidth = simWidth / chunkWidth;
 		simChunkHeight = simHeight / chunkHeight;
 		for (int y = 0; y < chunks.GetLength(1); y++)
@@ -65,19 +63,23 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 
-		particleObjects = new ParticleObject[ParticleManager.instance.particleObjects.Length]; //Instanciate particle obj
+		//Instanciate particle obj
+		particleObjects = new ParticleObject[ParticleManager.instance.particleObjects.Length];
 		for (int i = 0; i < particleObjects.Length; i++)
 		{
 			particleObjects[i] = ScriptableObject.CreateInstance<ParticleObject>();
 			particleObjects[i] = ParticleManager.instance.particleObjects[i];
+			if (particleObjects[i].texture != null && !particleObjects[i].texture.isReadable)
+			{
+				Debug.LogWarning("Make sure to set the Read/Write Enabled property of " 
+					+ particleObjects[i].texture.name + " texture!");
+			}
 		}
 
-		texture = new Texture2D(simWidth, simHeight);	//Instanciate the texture
+		//Instanciate the texture
+		texture = new Texture2D(simWidth, simHeight);
 		particleColors = new Color[particles.Length];
 		texture.filterMode = textureFilter;
-
-		//rend.material.mainTexture = texture;
-		//material.SetTexture("_Tex", texture);
 
 		rend.sprite = Sprite.Create(texture,
 			new Rect(0, 0, simWidth, simHeight),
@@ -109,20 +111,46 @@ public class ParticleLogic : MonoBehaviour
 		}
 		Vector2Int chunk = ChunkAtPosition(x, y);
 		chunks[chunk.x, chunk.y].updated = true;
-		chunks[Mathf.Clamp(chunk.x + 1, 0, simChunkWidth - 1), chunk.y].updated = true;
-		chunks[Mathf.Clamp(chunk.x - 1, 0, simChunkWidth - 1), chunk.y].updated = true;
-		chunks[chunk.x, Mathf.Clamp(chunk.y + 1, 0, simChunkHeight - 1)].updated = true;
-		chunks[chunk.x, Mathf.Clamp(chunk.y - 1, 0, simChunkHeight - 1)].updated = true;
+
+		if (x % chunkWidth == chunkWidth - 1)
+		{
+			chunks[Mathf.Clamp(chunk.x + 1, 0, simChunkWidth - 1), chunk.y].updated = true;
+		}
+		if(x % chunkWidth == 0)
+		{
+			chunks[Mathf.Clamp(chunk.x - 1, 0, simChunkWidth - 1), chunk.y].updated = true;
+		}
+		if(y % chunkHeight == chunkHeight - 1)
+		{
+			chunks[chunk.x, Mathf.Clamp(chunk.y + 1, 0, simChunkHeight - 1)].updated = true;
+		}
+		if(y % chunkHeight == 0)
+		{
+			chunks[chunk.x, Mathf.Clamp(chunk.y - 1, 0, simChunkHeight - 1)].updated = true;
+		}
 	}
 
 	public void UpdateSurroundingChunksNoCheck(int x, int y)
 	{
 		Vector2Int chunk = ChunkAtPosition(x, y);
 		chunks[chunk.x, chunk.y].updated = true;
-		chunks[Mathf.Clamp(chunk.x + 1, 0, simChunkWidth - 1), chunk.y].updated = true;
-		chunks[Mathf.Clamp(chunk.x - 1, 0, simChunkWidth - 1), chunk.y].updated = true;
-		chunks[chunk.x, Mathf.Clamp(chunk.y + 1, 0, simChunkHeight - 1)].updated = true;
-		chunks[chunk.x, Mathf.Clamp(chunk.y - 1, 0, simChunkHeight - 1)].updated = true;
+
+		if (x % chunkWidth == chunkWidth - 1)
+		{
+			chunks[Mathf.Clamp(chunk.x + 1, 0, simChunkWidth - 1), chunk.y].updated = true;
+		}
+		if (x % chunkWidth == 0)
+		{
+			chunks[Mathf.Clamp(chunk.x - 1, 0, simChunkWidth - 1), chunk.y].updated = true;
+		}
+		if (y % chunkHeight == chunkHeight - 1)
+		{
+			chunks[chunk.x, Mathf.Clamp(chunk.y + 1, 0, simChunkHeight - 1)].updated = true;
+		}
+		if (y % chunkHeight == 0)
+		{
+			chunks[chunk.x, Mathf.Clamp(chunk.y - 1, 0, simChunkHeight - 1)].updated = true;
+		}
 	}
 
 	public void ChunkUpdateStep()
@@ -271,8 +299,13 @@ public class ParticleLogic : MonoBehaviour
 
 	private void Update()
 	{
+		if(ParticleManager.instance.minParticleStepTime <= 0.001f)
+		{
+			return;
+		}
+
 		minStepTime += Time.deltaTime;
-		while (minStepTime >= ParticleManager.instance.minParticleStepTime && ParticleManager.instance.minParticleStepTime > 0.001)
+		while (minStepTime >= ParticleManager.instance.minParticleStepTime)
 		{
 			minStepTime -= ParticleManager.instance.minParticleStepTime;
 			ParticlePhysicsStep();
@@ -324,8 +357,10 @@ public class ParticleLogic : MonoBehaviour
 
 
 				//Check for every movement check for this particle object
-				foreach (ParticleMoveChecks check in currentParticle.moveChecks)
+				for (int i = 0; i < currentParticle.moveChecks.Length; i++)
 				{
+					ParticleMoveChecks check = currentParticle.moveChecks[i];
+
 					if (check.moveDirection == ParticleMoveChecks.MoveDirection.Down){
 						if(!(check.movementChance > Random.value)){
 							if (!check.continueIfFailed){
@@ -546,14 +581,14 @@ public class ParticleLogic : MonoBehaviour
 	{
 		for (int i = 0; i < particles.Length; i++)
 		{
-			int ix = i % simWidth;
-			int iy = i / simWidth;
+			int x = i % simWidth;
+			int y = i / simWidth;
 
 			if (chunkDebug)
 			{
-				if(!WasChunkUpdated(ix, iy))
+				if(!WasChunkUpdated(x, y))
 				{
-					if(CheckForParticle(0, ix, iy))
+					if(CheckForParticle(0, x, y))
 					{
 						particleColors[i] = Color.grey;
 						continue;
@@ -566,7 +601,7 @@ public class ParticleLogic : MonoBehaviour
 				}
 				else
 				{
-					if (CheckForParticle(0, ix, iy))
+					if (CheckForParticle(0, x, y))
 					{
 						particleColors[i] = backGroundColor;
 						continue;
@@ -575,37 +610,51 @@ public class ParticleLogic : MonoBehaviour
 				}
 			}
 
-			if (!WasChunkUpdated(ix, iy) && !chunkDebug)
+			if (!WasChunkUpdated(x, y) && !chunkDebug)
 			{
 				i += chunkWidth - 1;
 				continue;
 			}
 
-			if (CheckForParticle(0, ix, iy) && !chunkDebug)
+			ParticleObject particleObject = ParticleObjectFromIndex(x, y);
+
+			if (CheckForParticle(0, x, y) && !chunkDebug)
 			{
-				particleColors[i] = backGroundColor;
+				if (particleObject.texture != null)
+				{
+					particleColors[i] = ColorAtPosition(x, y, particleObject);
+				}
+				else
+				{
+					particleColors[i] = backGroundColor;
+				}
 				continue;
 			}
 
-			SetParticleUpdateStatus(ix, iy, false);
+			SetParticleUpdateStatus(x, y, false);
 
-			ParticleObject particleObject = ParticleObjectFromIndex(ix, iy);
 			ParticleSpread spread = particleObject.spread;
 			ParticleLife life = particleObject.life;
 
-			Color particleColor = particleObject.colors.Evaluate(particles[ix, iy].gradientColor);
+			if(particleObject.texture != null)
+			{
+				particleColors[i] = ColorAtPosition(x, y, particleObject);
+				continue;	//Skips color code because this already sets the pixel color
+			}
+
+			Color particleColor = particleObject.colors.Evaluate(particles[x, y].gradientColor);
 			
-			if (particles[ix, iy].freshSpread > 0 && spread.strength > 0)
+			if (particles[x, y].freshSpread > 0 && spread.strength > 0)
 			{
 				particleColors[i] =
 					Color.Lerp(particleColor, spread.freshSpreadColor,
-					spread.freshColorCurve.Evaluate((float)particles[ix, iy].freshSpread / (float)spread.freshForFrames));
+					spread.freshColorCurve.Evaluate((float)particles[x, y].freshSpread / (float)spread.freshForFrames));
 			}
 			else if (!particleObject.life.liveForever)
 			{
 				particleColors[i] =
 					Color.Lerp(life.deathColor, particleColor,
-					life.deathColorCurve.Evaluate((float)particles[ix, iy].lifeTime / (float)particles[ix, iy].totalLifeTime));
+					life.deathColorCurve.Evaluate((float)particles[x, y].lifeTime / (float)particles[x, y].totalLifeTime));
 			}
 			else
 			{
@@ -614,6 +663,11 @@ public class ParticleLogic : MonoBehaviour
 		}
 		texture.SetPixels(particleColors);
 		texture.Apply();
+
+		Color ColorAtPosition(int x, int y, ParticleObject particleObject)
+		{
+			return particleObject.texture.GetPixel(x, y);
+		}
 	}
 
 	#region Movement Checks
@@ -793,8 +847,7 @@ public class ParticleLogic : MonoBehaviour
 			return true;
 		}
 
-		if (!CheckForAnyParticle(particlePos.x + randDir, particlePos.y - 1)
-			&& !CheckForAnyParticle(particlePos.x + randDir, particlePos.y))
+		if (!CheckForAnyParticle(particlePos.x + randDir, particlePos.y - 1))
 		{
 			MoveParticle(particlePos, particleObject.type, new Vector2Int(randDir, -1));
 			return true;
@@ -817,8 +870,7 @@ public class ParticleLogic : MonoBehaviour
 			return true;
 		}
 
-		if (!CheckForAnyParticle(particlePos.x + 1, particlePos.y - 1)
-			&& !CheckForAnyParticle(particlePos.x + 1, particlePos.y))
+		if (!CheckForAnyParticle(particlePos.x + 1, particlePos.y - 1))
 		{
 			MoveParticle(particlePos, particleObject.type, new Vector2Int(1, -1));
 			return true;
@@ -841,8 +893,7 @@ public class ParticleLogic : MonoBehaviour
 			return true;
 		}
 
-		if (!CheckForAnyParticle(particlePos.x - 1, particlePos.y - 1)
-			&& !CheckForAnyParticle(particlePos.x - 1, particlePos.y))
+		if (!CheckForAnyParticle(particlePos.x - 1, particlePos.y - 1))
 		{
 			MoveParticle(particlePos, particleObject.type, new Vector2Int(-1, -1));
 			return true;
@@ -988,8 +1039,7 @@ public class ParticleLogic : MonoBehaviour
 			return true;
 		}
 
-		if (!CheckForAnyParticle(particlePos.x + dir, particlePos.y + 1)
-			&& !CheckForAnyParticle(particlePos.x + dir, particlePos.y))
+		if (!CheckForAnyParticle(particlePos.x + dir, particlePos.y + 1))
 		{
 			MoveParticle(particlePos, particleObject.type, new Vector2Int(dir, 1));
 			return true;
@@ -1012,8 +1062,7 @@ public class ParticleLogic : MonoBehaviour
 			return true;
 		}
 
-		if (!CheckForAnyParticle(particlePos.x + 1, particlePos.y + 1)
-			&& !CheckForAnyParticle(particlePos.x + 1, particlePos.y))
+		if (!CheckForAnyParticle(particlePos.x + 1, particlePos.y + 1))
 		{
 			MoveParticle(particlePos, particleObject.type, new Vector2Int(1, 1));
 			return true;
@@ -1036,8 +1085,7 @@ public class ParticleLogic : MonoBehaviour
 			return true;
 		}
 
-		if (!CheckForAnyParticle(particlePos.x - 1, particlePos.y + 1)
-			&& !CheckForAnyParticle(particlePos.x - 1, particlePos.y))
+		if (!CheckForAnyParticle(particlePos.x - 1, particlePos.y + 1))
 		{
 			MoveParticle(particlePos, particleObject.type, new Vector2Int(-1, 1));
 			return true;

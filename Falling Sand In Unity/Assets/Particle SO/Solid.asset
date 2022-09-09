@@ -43,6 +43,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 3
     m_NumAlphaKeys: 2
+  texture: {fileID: 2800000, guid: 4f0a8ba8631c73043984d0c39ef5ab4a, type: 3}
   waitFrames: 0
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
