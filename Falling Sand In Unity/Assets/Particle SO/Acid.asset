@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Acid
   m_EditorClassIdentifier: 
   type: 6
-  particleName: Acid
   colors:
     serializedVersion: 2
     key0: {r: 0.37254903, g: 1, b: 0, a: 1}
@@ -43,6 +42,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  texture: {fileID: 0}
   waitFrames: 0
   dispersionSpeedMin: 1
   dispersionSpeedMax: 10
@@ -94,14 +94,14 @@ MonoBehaviour:
     movementChance: 1
     continueIfFailed: 0
   - moveDirection: 2
-    movementChance: 1
+    movementChance: 0.7
     continueIfFailed: 0
   - moveDirection: 3
-    movementChance: 1
-    continueIfFailed: 0
+    movementChance: 0.8
+    continueIfFailed: 1
   - moveDirection: 4
-    movementChance: 0.527
-    continueIfFailed: 0
+    movementChance: 0.739
+    continueIfFailed: 1
   - moveDirection: 5
     movementChance: 1
     continueIfFailed: 0

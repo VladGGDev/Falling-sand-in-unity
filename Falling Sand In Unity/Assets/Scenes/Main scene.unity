@@ -274,7 +274,7 @@ MonoBehaviour:
   sortParticlesButton: 0
   particleObjects:
   - {fileID: 11400000, guid: d50be639367907b42970276f2f6c4b16, type: 2}
-  - {fileID: 11400000, guid: c8400a5245bbfe644a98a6433b50dcd8, type: 2}
+  - {fileID: 11400000, guid: 79595bc44897b5444be0a6298718997e, type: 2}
   - {fileID: 11400000, guid: 52ad7984b66c0f84d8798057afeadff5, type: 2}
   - {fileID: 11400000, guid: a20a0b909f2b8bb4db6845be5270e3c9, type: 2}
   - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
@@ -358,6 +358,8 @@ GameObject:
   - component: {fileID: 1626381618}
   - component: {fileID: 1626381620}
   - component: {fileID: 1626381621}
+  - component: {fileID: 1626381623}
+  - component: {fileID: 1626381622}
   m_Layer: 6
   m_Name: Sprite Particle Render
   m_TagString: Untagged
@@ -448,9 +450,10 @@ MonoBehaviour:
   chunkHeight: 8
   chunkDebug: 0
   texture: {fileID: 0}
-  rend: {fileID: 1626381618}
+  spriteRenderer: {fileID: 1626381618}
   backGroundColor: {r: 1, g: 1, b: 1, a: 1}
   textureFilter: 0
+  particleColors: []
 --- !u!114 &1626381621
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -466,7 +469,7 @@ MonoBehaviour:
   particleLogic: {fileID: 1626381620}
   particleObjects:
   - {fileID: 11400000, guid: d50be639367907b42970276f2f6c4b16, type: 2}
-  - {fileID: 11400000, guid: c8400a5245bbfe644a98a6433b50dcd8, type: 2}
+  - {fileID: 11400000, guid: 79595bc44897b5444be0a6298718997e, type: 2}
   - {fileID: 11400000, guid: 52ad7984b66c0f84d8798057afeadff5, type: 2}
   - {fileID: 11400000, guid: a20a0b909f2b8bb4db6845be5270e3c9, type: 2}
   - {fileID: 11400000, guid: fbd27ba62268a254ea12f0399dab512b, type: 2}
@@ -475,7 +478,62 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3ff25a57338cb484a898a9cac1396f4f, type: 2}
   - {fileID: 11400000, guid: 50575ce50fc647d4daa17f22c1a37cfb, type: 2}
   - {fileID: 11400000, guid: 3cd12bef82c04fb4ba37910d0dd6180e, type: 2}
-  shiftThickness: 5
+  thickness: 5
+  showPoint: 1
+  pointSize: 0.9
+  pointColor: {r: 0, g: 0, b: 0, a: 1}
+  showSquare: 1
+  squareColor: {r: 1, g: 0, b: 0, a: 1}
+--- !u!60 &1626381622
+PolygonCollider2D:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1626381617}
+  m_Enabled: 1
+  m_Density: 1
+  m_Material: {fileID: 0}
+  m_IsTrigger: 0
+  m_UsedByEffector: 0
+  m_UsedByComposite: 0
+  m_Offset: {x: 0, y: 0}
+  m_SpriteTilingProperty:
+    border: {x: 0, y: 0, z: 0, w: 0}
+    pivot: {x: 0.5, y: 0.5}
+    oldSize: {x: 1, y: 1}
+    newSize: {x: 1, y: 1}
+    adaptiveTilingThreshold: 0.5
+    drawMode: 0
+    adaptiveTiling: 0
+  m_AutoTiling: 0
+  m_Points:
+    m_Paths:
+    - - {x: -0.5, y: 0.5}
+      - {x: -0.5, y: -0.5}
+      - {x: 0.5, y: -0.5}
+      - {x: 0.5, y: 0.5}
+--- !u!114 &1626381623
+MonoBehaviour:
+  m_ObjectHideFlags: 0
+  m_CorrespondingSourceObject: {fileID: 0}
+  m_PrefabInstance: {fileID: 0}
+  m_PrefabAsset: {fileID: 0}
+  m_GameObject: {fileID: 1626381617}
+  m_Enabled: 1
+  m_EditorHideFlags: 0
+  m_Script: {fileID: 11500000, guid: 6a44cba8c5cc6ac48bcf2a782e9c52f3, type: 3}
+  m_Name: 
+  m_EditorClassIdentifier: 
+  particleLogic: {fileID: 1626381620}
+  groups:
+  - particleObjects:
+    - {fileID: 11400000, guid: d50be639367907b42970276f2f6c4b16, type: 2}
+    - {fileID: 11400000, guid: 3310003ed3c460140b8ad399400aa3fa, type: 2}
+    - {fileID: 11400000, guid: 52ad7984b66c0f84d8798057afeadff5, type: 2}
+    minNeighbors: 1
+    outputCollider: {fileID: 1626381622}
+  skipPhysicsFrames: 0
 --- !u!1 &1957027677
 GameObject:
   m_ObjectHideFlags: 0

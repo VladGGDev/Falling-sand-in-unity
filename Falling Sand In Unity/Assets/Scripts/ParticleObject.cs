@@ -304,8 +304,8 @@ static class ParticleObjectDefaults
 		{
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.Down, 0.963f),
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.RandomDownDiagonal, 1f),
-			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownRight, 1f),
-			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownLeft, 0.79f, true),
+			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownRight, 0.7f),
+			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownLeft, 0.8f, true),
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.TowardsHorisontalVelocity, 0.739f, true),
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.RandomHorisontal, 1f),
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.Right, 1f),
@@ -553,8 +553,8 @@ static class ParticleObjectDefaults
 		{
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.Down, 0.963f),
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.RandomDownDiagonal, 1f),
-			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownRight, 1f),
-			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownLeft, 0.79f),
+			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownRight, 0.7f),
+			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.DownLeft, 0.8f),
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.TowardsHorisontalVelocity, 0.739f, true),
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.RandomHorisontal, 1f),
 			new ParticleMoveChecks(ParticleMoveChecks.MoveDirection.Right, 1f),

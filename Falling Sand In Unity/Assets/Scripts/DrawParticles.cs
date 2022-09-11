@@ -1,13 +1,22 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.Rendering;
 
 public class DrawParticles : MonoBehaviour
 {
 	public ParticleLogic particleLogic;
 	public ParticleObject[] particleObjects;
 	[Range(0, 30)]
-	public int shiftThickness = 5;
+	public int thickness = 5;
+	[Space (5)]
+	[Header("Color gizmos:")]
+	public bool showPoint = true;
+	[Range(0.5f, 1f)]
+	public float pointSize = 0.9f;
+	public Color pointColor = Color.black;
+	public bool showSquare = true;
+	public Color squareColor = Color.red;
 	sbyte numKeyPressed = 0;
 	Camera cam;
 	Vector2Int previousMousePos;
@@ -46,52 +55,90 @@ public class DrawParticles : MonoBehaviour
 
 		currentMousePos = gridMousePos;
 
-		if (Input.GetMouseButton(0))
+		//if (Input.GetMouseButton(0))
+		//{
+		//	if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
+		//	{
+		//		for (int y = -shiftThickness / 2; y < Mathf.CeilToInt((float)shiftThickness / 2); y++)
+		//		{
+		//			for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
+		//			{
+		//				if (Input.GetKey(KeyCode.LeftControl))
+		//				{
+		//					if(x*x + y*y > (shiftThickness/2)*(shiftThickness / 2))
+		//					{
+		//						continue;
+		//					}
+		//				}
+		//				lineDrawing(previousMousePos.x + x, previousMousePos.y + y,
+		//					currentMousePos.x + x, currentMousePos.y + y, true);
+		//			}
+		//		}
+		//	}
+		//	else
+		//	{
+		//		lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, true);
+		//	}
+		//}
+		//if (Input.GetMouseButton(1))
+		//{
+		//	if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
+		//	{
+		//		for (int y = -shiftThickness / 2; y < Mathf.CeilToInt((float)shiftThickness / 2); y++)
+		//		{
+		//			for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
+		//			{
+		//				if (Input.GetKey(KeyCode.LeftControl))
+		//				{
+		//					if (x * x + y * y > (shiftThickness / 2) * (shiftThickness / 2))
+		//					{
+		//						continue;
+		//					}
+		//				}
+		//				lineDrawing(previousMousePos.x + x, previousMousePos.y + y,
+		//					currentMousePos.x + x, currentMousePos.y + y, false);
+		//			}
+		//		}
+		//	}
+		//	else
+		//	{
+		//		lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, false);
+		//	}
+		//}
+
+		if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
 		{
-			if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
+			for (int y = -thickness / 2; y < Mathf.CeilToInt((float)thickness / 2); y++)
 			{
-				for (int y = -shiftThickness / 2; y < Mathf.CeilToInt((float)shiftThickness / 2); y++)
+				for (int x = -thickness / 2; x < Mathf.CeilToInt((float)thickness / 2); x++)
 				{
-					for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
+					if (Input.GetKey(KeyCode.LeftControl))
 					{
-						if (Input.GetKey(KeyCode.LeftControl))
+						if (x * x + y * y > (thickness / 2) * (thickness / 2) + 1f)
 						{
-							if(x*x + y*y > (shiftThickness/2)*(shiftThickness / 2))
-							{
-								continue;
-							}
+							continue;
 						}
+					}
+					if (Input.GetMouseButton(0))
+					{
 						lineDrawing(previousMousePos.x + x, previousMousePos.y + y,
 							currentMousePos.x + x, currentMousePos.y + y, true);
 					}
-				}
-			}
-			else
-			{
-				lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, true);
-			}
-		}
-		if (Input.GetMouseButton(1))
-		{
-			if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
-			{
-				for (int y = -shiftThickness / 2; y < Mathf.CeilToInt((float)shiftThickness / 2); y++)
-				{
-					for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
+					else if (Input.GetMouseButton(1))
 					{
-						if (Input.GetKey(KeyCode.LeftControl))
-						{
-							if (x * x + y * y > (shiftThickness / 2) * (shiftThickness / 2))
-							{
-								continue;
-							}
-						}
 						lineDrawing(previousMousePos.x + x, previousMousePos.y + y,
 							currentMousePos.x + x, currentMousePos.y + y, false);
 					}
 				}
 			}
-			else
+		}
+		else
+		{
+			if (Input.GetMouseButton(0))
+			{
+				lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, true);
+			}
+			else if (Input.GetMouseButton(1))
 			{
 				lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, false);
 			}
@@ -192,18 +239,18 @@ public class DrawParticles : MonoBehaviour
 		{
 			if (Input.mouseScrollDelta.y < 0 && numKeyPressed >= 0)
 			{
-				shiftThickness--;
+				thickness--;
 			}
 			else if (Input.mouseScrollDelta.y > 0)
 			{
-				shiftThickness++;
+				thickness++;
 			}
 			else
 			{
 				return;
 			}
-			shiftThickness = Mathf.Clamp(shiftThickness, 1, 30);
-			Debug.Log("Thickness is now " + shiftThickness);
+			thickness = Mathf.Clamp(thickness, 1, 30);
+			Debug.Log("Thickness is now " + thickness);
 		}
 		else
 		{
@@ -258,6 +305,29 @@ public class DrawParticles : MonoBehaviour
 				y0 = y0 + sy;
 
 			}
+		}
+	}
+
+
+	private void OnDrawGizmos()
+	{
+		if (!Application.isPlaying)
+		{
+			return;
+		}
+		Vector2 pointPos = currentMousePos + Vector2.one * 0.5f -
+												new Vector2(particleLogic.simWidth * 0.5f, particleLogic.simHeight * 0.5f);
+		Vector2 pointScale = new Vector3(transform.localScale.x / (particleLogic.simWidth * 10f),
+						transform.localScale.y / (particleLogic.simHeight * 10f));
+		if (showPoint)
+		{
+			Gizmos.color = pointColor;
+			Gizmos.DrawWireCube(pointPos, pointScale * pointSize);
+		}
+		if (showSquare)
+		{
+			Gizmos.color = squareColor;
+			Gizmos.DrawWireCube(pointPos - Vector2.one * ((thickness - 1) % 2) * 0.5f, pointScale * thickness);
 		}
 	}
 }

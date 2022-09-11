@@ -1,3 +1,5 @@
+using System.Runtime.InteropServices;
+
 [System.Serializable]
 public struct Particle
 {
@@ -13,4 +15,4 @@ public struct Particle
 	public int freshSpread;
 	public int lifeTime;
 	public int totalLifeTime;
-}	
+}

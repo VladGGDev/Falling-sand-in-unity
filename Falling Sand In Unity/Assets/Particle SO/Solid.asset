@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Solid
   m_EditorClassIdentifier: 
   type: 3
-  particleName: Solid
   colors:
     serializedVersion: 2
     key0: {r: 0.7176471, g: 0, b: 0, a: 1}
@@ -93,7 +92,7 @@ MonoBehaviour:
     strength: 0
     chance: 0
   corrosion:
-    resistance: 0.871
+    resistance: 1
     strength: 0
     chance: 0
   spread:

@@ -18,14 +18,14 @@ public class ParticleLogic : MonoBehaviour
 	[Space(10f)]
 	public Texture2D texture;
 
-	public SpriteRenderer rend;
+	public SpriteRenderer spriteRenderer;
 	//public Renderer rend;
 	//public Material material;
 
 	public Color backGroundColor = Color.white;
 	public FilterMode textureFilter = FilterMode.Point;
 
-	Color[] particleColors;
+	public Color[] particleColors;
 
 	float minStepTime = 0;
 
@@ -81,7 +81,7 @@ public class ParticleLogic : MonoBehaviour
 		particleColors = new Color[particles.Length];
 		texture.filterMode = textureFilter;
 
-		rend.sprite = Sprite.Create(texture,
+		spriteRenderer.sprite = Sprite.Create(texture,
 			new Rect(0, 0, simWidth, simHeight),
 			new Vector2(0.5f, 0.5f));
 
@@ -105,7 +105,10 @@ public class ParticleLogic : MonoBehaviour
 
 	public void UpdateSurroundingChunks(int x, int y)
 	{
-		if(CheckFor8Particles(x, y))
+		if (CheckForAnyParticle(x, y + 1)
+			&& CheckForAnyParticle(x, y - 1)
+			&& CheckForAnyParticle(x + 1, y)
+			&& CheckForAnyParticle(x - 1, y))
 		{
 			return;
 		}
@@ -192,25 +195,6 @@ public class ParticleLogic : MonoBehaviour
 		}
 
 		if (particles[x, y].type != 0)
-		{
-			return true;
-		}
-		else
-		{
-			return false;
-		}
-	}
-
-	public bool CheckFor8Particles(int x, int y)
-	{
-		if (CheckForAnyParticle(x, y + 1)
-			&& CheckForAnyParticle(x, y - 1)
-			&& CheckForAnyParticle(x + 1, y)
-			&& CheckForAnyParticle(x - 1, y)
-			&& CheckForAnyParticle(x + 1, y + 1)
-			&& CheckForAnyParticle(x - 1, y + 1)
-			&& CheckForAnyParticle(x + 1, y - 1)
-			&& CheckForAnyParticle(x - 1, y - 1))
 		{
 			return true;
 		}
@@ -1187,7 +1171,14 @@ public class ParticleLogic : MonoBehaviour
 	}
 	bool CheckParticleEightRandom(Vector2Int particlePos, ParticleObject particleObject)
 	{
-		if (CheckFor8Particles(particlePos.x, particlePos.y)) //Can't move in any direction
+		if (CheckForAnyParticle(particlePos.x, particlePos.y + 1)
+			&& CheckForAnyParticle(particlePos.x, particlePos.y - 1)
+			&& CheckForAnyParticle(particlePos.x + 1, particlePos.y)
+			&& CheckForAnyParticle(particlePos.x - 1, particlePos.y)
+			&& CheckForAnyParticle(particlePos.x + 1, particlePos.y + 1)
+			&& CheckForAnyParticle(particlePos.x - 1, particlePos.y + 1)
+			&& CheckForAnyParticle(particlePos.x + 1, particlePos.y - 1)
+			&& CheckForAnyParticle(particlePos.x - 1, particlePos.y - 1)) //Can't move in any direction
 		{
 			return false;
 		}
