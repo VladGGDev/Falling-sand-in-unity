@@ -4,6 +4,7 @@ using UnityEngine;
 
 public class ParticleLogic : MonoBehaviour
 {
+	public float pixelsPerUnit = 100f;
 	public int simWidth = 10;
 	public int simHeight = 10;
 	public int chunkWidth = 25;
@@ -83,10 +84,14 @@ public class ParticleLogic : MonoBehaviour
 
 		spriteRenderer.sprite = Sprite.Create(texture,
 			new Rect(0, 0, simWidth, simHeight),
-			new Vector2(0.5f, 0.5f));
+			new Vector2(0.5f, 0.5f), 
+			pixelsPerUnit);
 
-		transform.localScale =
-			new Vector2(transform.localScale.x / (simWidth * 0.01f), transform.localScale.y / (simHeight * 0.01f)); 
+		Debug.Log(spriteRenderer.sprite.pixelsPerUnit);
+
+		transform.localScale = new Vector2(
+			transform.localScale.x / (simWidth * (1 / pixelsPerUnit)),
+			transform.localScale.y / (simHeight * (1 / pixelsPerUnit))); 
 	}
 
 	
@@ -276,6 +281,14 @@ public class ParticleLogic : MonoBehaviour
 			return ParticleManager.instance.airParticleObject;
 		}
 		return particleObjects[particles[x, y].type - 1];
+	}
+	public ParticleObject ParticleObjectFromType(byte type)
+	{
+		if (type == 0)
+		{
+			return ParticleManager.instance.airParticleObject;
+		}
+		return particleObjects[type - 1];
 	}
 	#endregion
 
@@ -665,11 +678,11 @@ public class ParticleLogic : MonoBehaviour
 		CreateParticle(type, newPos.x, newPos.y);
 		if (particleObject.spread.strength > 0)
 		{
-			particles[newPos.x, newPos.y].freshSpread = particles[particlePos.x, particlePos.y].freshSpread - 1;
+			particles[newPos.x, newPos.y].freshSpread = (particles[particlePos.x, particlePos.y].freshSpread - 1);
 		}
 		if (!particleObject.life.liveForever)
 		{
-			particles[newPos.x, newPos.y].lifeTime = particles[particlePos.x, particlePos.y].lifeTime - 1;
+			particles[newPos.x, newPos.y].lifeTime = (particles[particlePos.x, particlePos.y].lifeTime - 1);
 		}
 		DeleteParticle(particlePos.x, particlePos.y);
 		SetParticleUpdateStatus(newPos.x, newPos.y, true);
@@ -681,11 +694,11 @@ public class ParticleLogic : MonoBehaviour
 		CreateParticle(type, newX, particlePos.y);
 		if (particleObject.spread.strength > 0)
 		{
-			particles[newX, particlePos.y].freshSpread = particles[particlePos.x, particlePos.y].freshSpread - 1;
+			particles[newX, particlePos.y].freshSpread = (particles[particlePos.x, particlePos.y].freshSpread - 1);
 		}
 		if (!particleObject.life.liveForever)
 		{
-			particles[newX, particlePos.y].lifeTime = particles[particlePos.x, particlePos.y].lifeTime - 1;
+			particles[newX, particlePos.y].lifeTime = (particles[particlePos.x, particlePos.y].lifeTime - 1);
 		}
 		DeleteParticle(particlePos.x, particlePos.y);
 		SetParticleUpdateStatus(newX, particlePos.y, true);

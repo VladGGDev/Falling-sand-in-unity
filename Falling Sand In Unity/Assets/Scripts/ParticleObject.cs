@@ -17,7 +17,7 @@ public class ParticleObject : ScriptableObject
 
 	[Space(15)]
 	[Tooltip("How many frames should a particle wait before moving.")]
-	public ushort waitFrames = 0;
+	public int waitFrames = 0;
 
 	[Tooltip("The minimum distance the liquid will spread.\nA lower value than the max or simply 1 should be here.")]
 	public int dispersionSpeedMin = 1;
@@ -692,7 +692,7 @@ static class ParticleObjectDefaults
 		asset.spread.chance = 0.083f;
 		asset.spread.canSpreadToAir = true;
 		asset.spread.freshForFrames = 100;
-		asset.spread.freshSpreadColor = new Color(1f, 0, 0.92f, 0);
+		asset.spread.freshSpreadColor = new Color(1f, 0, 0.92f, 1f);
 		asset.spread.spreadChecks = 4;
 		asset.spread.spreadDirection = ParticleSpread.SpreadDirection.EightRandom;
 		asset.spread.spreadOnce = true;
@@ -755,7 +755,7 @@ static class ParticleObjectDefaults
 		asset.spread.chance = 1f;
 		asset.spread.canSpreadToAir = false;
 		asset.spread.freshForFrames = 10;
-		asset.spread.freshSpreadColor = new Color(1f, 0.05f, 0.05f, 0);
+		asset.spread.freshSpreadColor = new Color(1f, 0.05f, 0.05f, 1f);
 		asset.spread.spreadChecks = 4;
 		asset.spread.spreadDirection = ParticleSpread.SpreadDirection.XRandom;
 		asset.spread.spreadOnce = true;

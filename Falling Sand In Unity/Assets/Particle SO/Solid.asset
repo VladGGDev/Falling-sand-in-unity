@@ -92,7 +92,7 @@ MonoBehaviour:
     strength: 0
     chance: 0
   corrosion:
-    resistance: 1
+    resistance: 0.91
     strength: 0
     chance: 0
   spread:

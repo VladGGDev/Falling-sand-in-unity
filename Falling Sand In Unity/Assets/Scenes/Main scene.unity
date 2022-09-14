@@ -444,10 +444,11 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85f1d8a17025b149805276ed344e5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  simWidth: 256
-  simHeight: 256
-  chunkWidth: 8
-  chunkHeight: 8
+  pixelsPerUnit: 15
+  simWidth: 100
+  simHeight: 100
+  chunkWidth: 20
+  chunkHeight: 20
   chunkDebug: 0
   texture: {fileID: 0}
   spriteRenderer: {fileID: 1626381618}
@@ -481,9 +482,9 @@ MonoBehaviour:
   thickness: 5
   showPoint: 1
   pointSize: 0.9
-  pointColor: {r: 0, g: 0, b: 0, a: 1}
+  pointColor: {r: 0, g: 0, b: 0, a: 0.6117647}
   showSquare: 1
-  squareColor: {r: 1, g: 0, b: 0, a: 1}
+  squareColor: {r: 1, g: 0, b: 0, a: 0.49019608}
 --- !u!60 &1626381622
 PolygonCollider2D:
   m_ObjectHideFlags: 0
@@ -520,7 +521,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1626381617}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a44cba8c5cc6ac48bcf2a782e9c52f3, type: 3}
   m_Name: 

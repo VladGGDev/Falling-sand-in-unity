@@ -12,8 +12,7 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 571ace0cf7888034eb374c4f925edde7, type: 3}
   m_Name: Cool fire
   m_EditorClassIdentifier: 
-  type: 11
-  particleName: cool fire
+  type: 10
   colors:
     serializedVersion: 2
     key0: {r: 0.32941177, g: 0.57254905, b: 0.9921569, a: 1}
@@ -43,6 +42,7 @@ MonoBehaviour:
     m_Mode: 1
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  texture: {fileID: 0}
   waitFrames: 0
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
@@ -77,10 +77,6 @@ MonoBehaviour:
       m_RotationOrder: 4
     createOnDeath: {fileID: 0}
     chance: 0.5
-  corrosion:
-    resistance: 1
-    strength: 0
-    chance: 0
   moveChecks:
   - moveDirection: 8
     movementChance: 0.343
@@ -88,6 +84,14 @@ MonoBehaviour:
   - moveDirection: 14
     movementChance: 0.611
     continueIfFailed: 0
+  passThorugh:
+    resistance: 0
+    strength: 0
+    chance: 0
+  corrosion:
+    resistance: 1
+    strength: 0
+    chance: 0
   spread:
     resistance: 1
     strength: 0.59
@@ -122,3 +126,4 @@ MonoBehaviour:
       m_PostInfinity: 2
       m_RotationOrder: 4
     canSpreadToAir: 0
+  collision: []

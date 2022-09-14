@@ -47,7 +47,7 @@ MonoBehaviour:
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
   life:
-    liveForever: 0
+    liveForever: 1
     minLifeTime: 25
     maxLifeTime: 50
     deathColor: {r: 1, g: 0.96792454, b: 0.5509434, a: 1}
@@ -127,6 +127,6 @@ MonoBehaviour:
       m_RotationOrder: 4
     canSpreadToAir: 0
   collision:
-  - touchingParticle: {fileID: 11400000, guid: c8400a5245bbfe644a98a6433b50dcd8, type: 2}
+  - touchingParticle: {fileID: 11400000, guid: 79595bc44897b5444be0a6298718997e, type: 2}
     becomeParticle: {fileID: 11400000, guid: 59adfb76b93de2b4abff91708074f53d, type: 2}
     chance: 1

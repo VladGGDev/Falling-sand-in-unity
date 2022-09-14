@@ -309,25 +309,25 @@ public class DrawParticles : MonoBehaviour
 	}
 
 
-	private void OnDrawGizmos()
-	{
-		if (!Application.isPlaying)
-		{
-			return;
-		}
-		Vector2 pointPos = currentMousePos + Vector2.one * 0.5f -
-												new Vector2(particleLogic.simWidth * 0.5f, particleLogic.simHeight * 0.5f);
-		Vector2 pointScale = new Vector3(transform.localScale.x / (particleLogic.simWidth * 10f),
-						transform.localScale.y / (particleLogic.simHeight * 10f));
-		if (showPoint)
-		{
-			Gizmos.color = pointColor;
-			Gizmos.DrawWireCube(pointPos, pointScale * pointSize);
-		}
-		if (showSquare)
-		{
-			Gizmos.color = squareColor;
-			Gizmos.DrawWireCube(pointPos - Vector2.one * ((thickness - 1) % 2) * 0.5f, pointScale * thickness);
-		}
-	}
+	//private void OnDrawGizmos()
+	//{
+	//	if (!Application.isPlaying)
+	//	{
+	//		return;
+	//	}
+	//	Vector2 pointPos = currentMousePos + Vector2.one * 0.5f -
+	//											new Vector2(particleLogic.simWidth * 0.5f, particleLogic.simHeight * 0.5f);
+	//	Vector2 pointScale = new Vector3(transform.localScale.x / (particleLogic.simWidth * 10f),
+	//					transform.localScale.y / (particleLogic.simHeight * 10f));
+	//	if (showPoint)
+	//	{
+	//		Gizmos.color = pointColor;
+	//		Gizmos.DrawCube(pointPos, pointScale * pointSize);
+	//	}
+	//	if (showSquare)
+	//	{
+	//		Gizmos.color = squareColor;
+	//		Gizmos.DrawCube(pointPos - Vector2.one * ((thickness - 1) % 2) * 0.5f, pointScale * thickness);
+	//	}
+	//}
 }

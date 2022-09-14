@@ -1,11 +1,17 @@
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
-using static UnityEngine.ParticleSystem;
+
+[System.Serializable]
+public class PointOutput
+{
+	public List<Vector2> points;
+}
 
 public class CreateParticleCollider : MonoBehaviour
 {
     public ParticleLogic particleLogic;
+	PointOutput[] pointOutputs;
     public ParticleColliderGroup[] groups;
     [Space(10)]
     [Tooltip("How many physics frames should the script skip before generating the collider.")]
@@ -14,14 +20,18 @@ public class CreateParticleCollider : MonoBehaviour
 
     private void Start()
     {
+		pointOutputs = new PointOutput[groups.Length];
         for (int i = 0; i < groups.Length; i++)
         {
+			pointOutputs[i] = new PointOutput();
+			pointOutputs[i].points = new List<Vector2>();
             groups[i].outputParticles = new byte[particleLogic.simWidth, particleLogic.simHeight];
         }
     }
 
     private void FixedUpdate()
     {
+		//Check if you should skip this physics frame
         framesSkiped--;
         if(framesSkiped < 0)
         {
@@ -32,12 +42,144 @@ public class CreateParticleCollider : MonoBehaviour
             return;
         }
 
-        //After checking if it should skip, generate the collider
+		//Clear the marching squares list
+		for (int i = 0; i < pointOutputs.Length; i++)
+		{
+			pointOutputs[i].points.Clear();
+		}
+
+        //Eliminate particles that don't have neighbors
         for (int i = 0; i < groups.Length; i++)
         {
             IgnoreParticles(groups[i]);
         }
-    }
+
+		//Marching squares
+		for (int i = 0; i < groups.Length; i++)
+		{
+			MarchingSquares(groups[i], i);
+		}
+	}
+
+	private void OnDrawGizmos()
+	{
+		if (!Application.isPlaying)
+		{
+			return;
+		}
+
+		for (int i = 0; i < pointOutputs[0].points.Count; i+=2)
+		{
+			Gizmos.color = Color.green;
+			Gizmos.DrawLine(pointOutputs[0].points[i], pointOutputs[0].points[i + 1]);
+		}
+	}
+
+	void MarchingSquares(ParticleColliderGroup g, int index)
+	{
+		int h = particleLogic.simHeight;
+		int w = particleLogic.simWidth;
+		
+		for (int i = 0; i < h - 1; i++)
+		{
+			for (int j = 0; j < w - 1; j++)
+			{
+				//res is the distance from ont pixel to the other
+				float resX = 1 / (particleLogic.pixelsPerUnit / transform.localScale.x);
+				float resY = 1 / (particleLogic.pixelsPerUnit / transform.localScale.y);
+				float x = (j - w / 2f) / (particleLogic.pixelsPerUnit / transform.localScale.x);
+				float y = (i - h / 2f) / (particleLogic.pixelsPerUnit / transform.localScale.y);
+				Vector2 a = new Vector2(x + resX * 0.5f, y);
+				Vector2 b = new Vector2(x + 1, y + resY * 0.5f);
+				Vector2 c = new Vector2(x + resY * 0.5f, y + 1);
+				Vector2 d = new Vector2(x, y + resY * 0.5f);
+				byte state = (byte)BinaryStateConverter(
+					CheckForParticleInGroup(j, i, g),
+					CheckForParticleInGroup(j + 1, i, g),
+					CheckForParticleInGroup(j + 1, i + 1, g),
+					CheckForParticleInGroup(j, i + 1, g));
+				//byte state = (byte)BinaryStateConverter(
+				//	g.outputParticles[j, i],
+				//	g.outputParticles[j + 1, i],
+				//	g.outputParticles[j + 1, i + 1],
+				//	g.outputParticles[j, i + 1]);
+
+				switch (state)
+				{
+					case 1:
+						pointOutputs[index].points.Add(a);
+						pointOutputs[index].points.Add(d);
+						break;
+					case 2:
+						pointOutputs[index].points.Add(a);
+						pointOutputs[index].points.Add(b);
+						break;
+					case 3:
+						pointOutputs[index].points.Add(b);
+						pointOutputs[index].points.Add(d);
+						break;
+					case 4:
+						pointOutputs[index].points.Add(b);
+						pointOutputs[index].points.Add(c);
+						break;
+					case 5:
+						pointOutputs[index].points.Add(a);
+						pointOutputs[index].points.Add(b);
+						pointOutputs[index].points.Add(c);
+						pointOutputs[index].points.Add(d);
+						break;
+					case 6:
+						pointOutputs[index].points.Add(a);
+						pointOutputs[index].points.Add(c);
+						break;
+					case 7:
+						pointOutputs[index].points.Add(c);
+						pointOutputs[index].points.Add(d);
+						break;
+					case 8:
+						pointOutputs[index].points.Add(c);
+						pointOutputs[index].points.Add(d);
+						break;
+					case 9:
+						pointOutputs[index].points.Add(a);
+						pointOutputs[index].points.Add(c);
+						break;
+					case 10:
+						pointOutputs[index].points.Add(a);
+						pointOutputs[index].points.Add(d);
+						pointOutputs[index].points.Add(b);
+						pointOutputs[index].points.Add(c);
+						break;
+					case 11:
+						pointOutputs[index].points.Add(b);
+						pointOutputs[index].points.Add(c);
+						break;
+					case 12:
+						pointOutputs[index].points.Add(b);
+						pointOutputs[index].points.Add(d);
+						break;
+					case 13:
+						pointOutputs[index].points.Add(a);
+						pointOutputs[index].points.Add(b);
+						break;
+					case 14:
+						pointOutputs[index].points.Add(a);
+						pointOutputs[index].points.Add(d);
+						break;
+				}
+			}
+		}
+
+		int BinaryStateConverter(bool a, bool b, bool c, bool d)
+		{
+			int ia = a ? 1 : 0;
+			int ib = b ? 1 : 0;
+			int ic = c ? 1 : 0;
+			int id = d ? 1 : 0;
+			return ia + ib * 2 + ic * 4 + id * 8;
+		}
+	}
+
     void IgnoreParticles(ParticleColliderGroup g)
     {
 		if(g.minNeighbors == 0)
@@ -50,6 +192,7 @@ public class CreateParticleCollider : MonoBehaviour
 					g.outputParticles[x, y] = particleLogic.particles[x, y].type;
 				}
 			}
+			return;
 		}
 
         int neighbors = 0;
@@ -61,7 +204,7 @@ public class CreateParticleCollider : MonoBehaviour
 			for (int x = 0; x < particleLogic.simWidth; x++){   //Repeats for every particle
 
                 if (particleLogic.particles[x, y].type == 0
-                    || !CheckForParticleInGroup(x, y))
+                    || !CheckForParticleInGroup(x, y, g))
                 {
                     continue;
                 }
@@ -77,7 +220,7 @@ public class CreateParticleCollider : MonoBehaviour
 						break;
 					}
 
-					if (CheckForParticleInGroup(x + ii, y))
+					if (CheckForParticleInGroup(x + ii, y, g))
 					{
 						neighbors++;
 					}
@@ -122,7 +265,7 @@ public class CreateParticleCollider : MonoBehaviour
 			{   //Repeats for every particle
 
 				if (particleLogic.particles[x, y].type == 0
-                    || !CheckForParticleInGroup(x, y))
+                    || !CheckForParticleInGroup(x, y, g))
 				{
 					continue;
 				}
@@ -138,7 +281,7 @@ public class CreateParticleCollider : MonoBehaviour
 						break;
 					}
 
-					if (CheckForParticleInGroup(x, y + ii))
+					if (CheckForParticleInGroup(x, y + ii, g))
 					{
 						neighbors++;
 					}
@@ -191,17 +334,17 @@ public class CreateParticleCollider : MonoBehaviour
 				}
 			}
 		}
+	}
 
-		bool CheckForParticleInGroup(int x, int y)
-        {
-			for (int i = 0; i < g.particleObjects.Length; i++)  //Checks for every particle object
+	bool CheckForParticleInGroup(int x, int y, ParticleColliderGroup g)
+	{
+		for (int i = 0; i < g.particleObjects.Length; i++)  //Checks for every particle object
+		{
+			if (particleLogic.particles[x, y].type == g.particleObjects[i].type)
 			{
-				if (particleLogic.particles[x, y].type == g.particleObjects[i].type)
-				{
-					return true;
-				}
+				return true;
 			}
-            return false;
 		}
+		return false;
 	}
 }
