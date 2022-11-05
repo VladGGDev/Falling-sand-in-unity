@@ -5,6 +5,7 @@ using UnityEngine;
 public class ParticleManager : MonoBehaviour
 {
     public float minParticleStepTime = 0.02f;
+    public float maxParticleStepTime = 0.33f;
     public ParticleObject airParticleObject;
 	[Tooltip("Pretend this is a button")]
     public bool sortParticlesButton = false;

@@ -269,7 +269,8 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: 83b705fefefa9374c8e260214a5ed50d, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  minParticleStepTime: 0.02
+  minParticleStepTime: 0.025
+  maxParticleStepTime: 0.1
   airParticleObject: {fileID: 11400000, guid: f8665fd15435ac240806546bd89b6503, type: 2}
   sortParticlesButton: 0
   particleObjects:
@@ -444,17 +445,16 @@ MonoBehaviour:
   m_Script: {fileID: 11500000, guid: f85f1d8a17025b149805276ed344e5a1, type: 3}
   m_Name: 
   m_EditorClassIdentifier: 
-  pixelsPerUnit: 15
-  simWidth: 100
-  simHeight: 100
-  chunkWidth: 20
-  chunkHeight: 20
+  pixelsPerUnit: 16
+  simWidth: 256
+  simHeight: 256
+  chunkWidth: 8
+  chunkHeight: 4
   chunkDebug: 0
   texture: {fileID: 0}
   spriteRenderer: {fileID: 1626381618}
   backGroundColor: {r: 1, g: 1, b: 1, a: 1}
   textureFilter: 0
-  particleColors: []
 --- !u!114 &1626381621
 MonoBehaviour:
   m_ObjectHideFlags: 0

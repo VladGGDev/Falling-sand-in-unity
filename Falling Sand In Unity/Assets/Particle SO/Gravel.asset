@@ -13,7 +13,6 @@ MonoBehaviour:
   m_Name: Gravel
   m_EditorClassIdentifier: 
   type: 7
-  particleName: Gravel
   colors:
     serializedVersion: 2
     key0: {r: 0.8000001, g: 0.8000001, b: 0.75294125, a: 1}
@@ -43,6 +42,7 @@ MonoBehaviour:
     m_Mode: 0
     m_NumColorKeys: 2
     m_NumAlphaKeys: 2
+  texture: {fileID: 0}
   waitFrames: 0
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
@@ -95,7 +95,7 @@ MonoBehaviour:
     strength: 1
     chance: 0.843
   corrosion:
-    resistance: 0
+    resistance: 0.53
     strength: 0
     chance: 0
   spread:

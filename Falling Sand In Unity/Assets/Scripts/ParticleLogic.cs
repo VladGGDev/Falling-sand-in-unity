@@ -26,13 +26,13 @@ public class ParticleLogic : MonoBehaviour
 	public Color backGroundColor = Color.white;
 	public FilterMode textureFilter = FilterMode.Point;
 
-	public Color[] particleColors;
+	Color[] particleColors;
 
 	float minStepTime = 0;
 
 	private void Start()
 	{
-		//Instantiate the particle grid
+		// Instantiate the particle grid
 		particles = new Particle[simWidth, simHeight];
 		for (int y = 0; y < particles.GetLength(1); y++)
 		{
@@ -52,7 +52,9 @@ public class ParticleLogic : MonoBehaviour
 				gameObject.name, simWidth, simHeight, chunkWidth, chunkHeight);
 			this.enabled = false;
 		}
-		//Instanciate the chunk grid
+
+
+		// Instanciate the chunk grid
 		chunks = new Chunk[simWidth / chunkWidth, simHeight / chunkHeight];
 		simChunkWidth = simWidth / chunkWidth;
 		simChunkHeight = simHeight / chunkHeight;
@@ -64,7 +66,8 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 
-		//Instanciate particle obj
+
+		// Instanciate particle obj
 		particleObjects = new ParticleObject[ParticleManager.instance.particleObjects.Length];
 		for (int i = 0; i < particleObjects.Length; i++)
 		{
@@ -77,7 +80,8 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 
-		//Instanciate the texture
+
+		// Instanciate the sprite
 		texture = new Texture2D(simWidth, simHeight);
 		particleColors = new Color[particles.Length];
 		texture.filterMode = textureFilter;
@@ -86,8 +90,6 @@ public class ParticleLogic : MonoBehaviour
 			new Rect(0, 0, simWidth, simHeight),
 			new Vector2(0.5f, 0.5f), 
 			pixelsPerUnit);
-
-		Debug.Log(spriteRenderer.sprite.pixelsPerUnit);
 
 		transform.localScale = new Vector2(
 			transform.localScale.x / (simWidth * (1 / pixelsPerUnit)),
@@ -105,7 +107,7 @@ public class ParticleLogic : MonoBehaviour
 	public bool WasChunkUpdated(int x, int y)
 	{
 		Vector2Int chunk = ChunkAtPosition(x, y);
-		return chunks[chunk.x, chunk.y].updatedLastFrame;
+		return chunks[chunk.x, chunk.y].updatedLastFrame || chunks[chunk.x, chunk.y].updated;
 	}
 
 	public void UpdateSurroundingChunks(int x, int y)
@@ -117,29 +119,6 @@ public class ParticleLogic : MonoBehaviour
 		{
 			return;
 		}
-		Vector2Int chunk = ChunkAtPosition(x, y);
-		chunks[chunk.x, chunk.y].updated = true;
-
-		if (x % chunkWidth == chunkWidth - 1)
-		{
-			chunks[Mathf.Clamp(chunk.x + 1, 0, simChunkWidth - 1), chunk.y].updated = true;
-		}
-		if(x % chunkWidth == 0)
-		{
-			chunks[Mathf.Clamp(chunk.x - 1, 0, simChunkWidth - 1), chunk.y].updated = true;
-		}
-		if(y % chunkHeight == chunkHeight - 1)
-		{
-			chunks[chunk.x, Mathf.Clamp(chunk.y + 1, 0, simChunkHeight - 1)].updated = true;
-		}
-		if(y % chunkHeight == 0)
-		{
-			chunks[chunk.x, Mathf.Clamp(chunk.y - 1, 0, simChunkHeight - 1)].updated = true;
-		}
-	}
-
-	public void UpdateSurroundingChunksNoCheck(int x, int y)
-	{
 		Vector2Int chunk = ChunkAtPosition(x, y);
 		chunks[chunk.x, chunk.y].updated = true;
 
@@ -159,6 +138,34 @@ public class ParticleLogic : MonoBehaviour
 		{
 			chunks[chunk.x, Mathf.Clamp(chunk.y - 1, 0, simChunkHeight - 1)].updated = true;
 		}
+	}
+
+	public void UpdateSurroundingChunksNoCheck(int x, int y)
+	{
+		Vector2Int chunk = ChunkAtPosition(x, y);
+		chunks[chunk.x, chunk.y].updated = true;
+
+		chunks[Mathf.Clamp(chunk.x + 1, 0, simChunkWidth - 1), chunk.y].updated = true;
+		chunks[Mathf.Clamp(chunk.x - 1, 0, simChunkWidth - 1), chunk.y].updated = true;
+		chunks[chunk.x, Mathf.Clamp(chunk.y + 1, 0, simChunkHeight - 1)].updated = true;
+		chunks[chunk.x, Mathf.Clamp(chunk.y - 1, 0, simChunkHeight - 1)].updated = true;
+
+		//if (x % chunkWidth == chunkWidth - 1)
+		//{
+		//	chunks[Mathf.Clamp(chunk.x + 1, 0, simChunkWidth - 1), chunk.y].updated = true;
+		//}
+		//if (x % chunkWidth == 0)
+		//{
+		//	chunks[Mathf.Clamp(chunk.x - 1, 0, simChunkWidth - 1), chunk.y].updated = true;
+		//}
+		//if (y % chunkHeight == chunkHeight - 1)
+		//{
+		//	chunks[chunk.x, Mathf.Clamp(chunk.y + 1, 0, simChunkHeight - 1)].updated = true;
+		//}
+		//if (y % chunkHeight == 0)
+		//{
+		//	chunks[chunk.x, Mathf.Clamp(chunk.y - 1, 0, simChunkHeight - 1)].updated = true;
+		//}
 	}
 
 	public void ChunkUpdateStep()
@@ -302,9 +309,13 @@ public class ParticleLogic : MonoBehaviour
 		}
 
 		minStepTime += Time.deltaTime;
+
 		while (minStepTime >= ParticleManager.instance.minParticleStepTime)
 		{
-			minStepTime -= ParticleManager.instance.minParticleStepTime;
+			if (Time.deltaTime <= ParticleManager.instance.maxParticleStepTime)
+				minStepTime -= ParticleManager.instance.minParticleStepTime;
+			else
+				minStepTime -= ParticleManager.instance.maxParticleStepTime;
 			ParticlePhysicsStep();
 		}
 	}
@@ -317,6 +328,7 @@ public class ParticleLogic : MonoBehaviour
 			{
 				if (particles[x, y].hasBeenUpdated)
 				{
+					SetParticleUpdateStatus(x, y, false);
 					continue;
 				}
 				if (particles[x, y].type == 0)
@@ -728,15 +740,9 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 
-		if (!CheckForAnyParticle(particlePos.x + (i - 1) * dir, particlePos.y))
-		{
-			MoveLiquidParticle(particlePos, particleObject.type, (sbyte)(dir * (i - 1)));
-			return true;
-		}
-		else
-		{
-			return false;
-		}
+		// i - 1 because i was incremented before finishing the loop
+		MoveLiquidParticle(particlePos, particleObject.type, (sbyte)(dir * (i - 1)));
+		return true;
 	}
 	bool CorrodeParticle(Vector2Int particlePos, ParticleObject particleObject, Vector2Int dir, bool liquid)
 	{
@@ -1261,6 +1267,7 @@ public class ParticleLogic : MonoBehaviour
 		return false;
 	}
 
+
 	void SpreadParticle(Vector2Int particlePos, ParticleObject particleObject)
 	{
 		if (CheckForParticle(particleObject.type, particlePos.x, particlePos.y + 1)
@@ -1357,7 +1364,6 @@ public class ParticleLogic : MonoBehaviour
 			}
 		}
 	}
-
 	void CollideWithParticles(Vector2Int particlePos, ParticleObject particleObject)
 	{
 		if (CheckForParticle(particleObject.type, particlePos.x, particlePos.y + 1)

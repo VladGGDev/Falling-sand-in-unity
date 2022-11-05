@@ -39,6 +39,18 @@ public class DrawParticles : MonoBehaviour
 		Vector2Int gridMousePos = 
 			new Vector2Int((int)(mousePos.x * particleLogic.simWidth), (int)(mousePos.y * particleLogic.simHeight));
 
+		if (Input.GetKeyDown(KeyCode.Space))
+		{
+			Vector2Int chunk = particleLogic.ChunkAtPosition(gridMousePos.x, gridMousePos.y);
+			Debug.LogFormat("Pos: {0}; Name: {1}; Particle updated: {2}; WasChunkUpdated(): {3}; C upd: {4}; Cupd last {5}",
+				gridMousePos,
+				particleLogic.ParticleObjectFromType(particleLogic.particles[gridMousePos.x, gridMousePos.y].type),
+				particleLogic.particles[gridMousePos.x, gridMousePos.y].hasBeenUpdated,
+				particleLogic.WasChunkUpdated(gridMousePos.x, gridMousePos.y),
+				particleLogic.chunks[chunk.x, chunk.y].updated,
+				particleLogic.chunks[chunk.x, chunk.y].updatedLastFrame);
+		}
+
 		GetAlphaInput();		
 		if(!(0 > Input.mousePosition.x || 0 > Input.mousePosition.y 
 			|| Screen.width < Input.mousePosition.x || Screen.height < Input.mousePosition.y))
@@ -53,58 +65,9 @@ public class DrawParticles : MonoBehaviour
 			previousMousePos = gridMousePos;
 		}
 
+
 		currentMousePos = gridMousePos;
 
-		//if (Input.GetMouseButton(0))
-		//{
-		//	if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
-		//	{
-		//		for (int y = -shiftThickness / 2; y < Mathf.CeilToInt((float)shiftThickness / 2); y++)
-		//		{
-		//			for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
-		//			{
-		//				if (Input.GetKey(KeyCode.LeftControl))
-		//				{
-		//					if(x*x + y*y > (shiftThickness/2)*(shiftThickness / 2))
-		//					{
-		//						continue;
-		//					}
-		//				}
-		//				lineDrawing(previousMousePos.x + x, previousMousePos.y + y,
-		//					currentMousePos.x + x, currentMousePos.y + y, true);
-		//			}
-		//		}
-		//	}
-		//	else
-		//	{
-		//		lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, true);
-		//	}
-		//}
-		//if (Input.GetMouseButton(1))
-		//{
-		//	if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
-		//	{
-		//		for (int y = -shiftThickness / 2; y < Mathf.CeilToInt((float)shiftThickness / 2); y++)
-		//		{
-		//			for (int x = -shiftThickness / 2; x < Mathf.CeilToInt((float)shiftThickness / 2); x++)
-		//			{
-		//				if (Input.GetKey(KeyCode.LeftControl))
-		//				{
-		//					if (x * x + y * y > (shiftThickness / 2) * (shiftThickness / 2))
-		//					{
-		//						continue;
-		//					}
-		//				}
-		//				lineDrawing(previousMousePos.x + x, previousMousePos.y + y,
-		//					currentMousePos.x + x, currentMousePos.y + y, false);
-		//			}
-		//		}
-		//	}
-		//	else
-		//	{
-		//		lineDrawing(previousMousePos.x, previousMousePos.y, currentMousePos.x, currentMousePos.y, false);
-		//	}
-		//}
 
 		if (Input.GetKey(KeyCode.LeftShift) || Input.GetKey(KeyCode.LeftControl))
 		{
@@ -144,6 +107,7 @@ public class DrawParticles : MonoBehaviour
 			}
 		}
 
+
 		if (Input.GetKeyDown(KeyCode.R))
 		{
 			for (int y = 0; y < particleLogic.particles.GetLength(1); y++)
@@ -154,6 +118,7 @@ public class DrawParticles : MonoBehaviour
 				}
 			}
 		}
+
 
 		previousMousePos = currentMousePos;
 	}

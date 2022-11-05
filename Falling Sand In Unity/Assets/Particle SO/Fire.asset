@@ -47,7 +47,7 @@ MonoBehaviour:
   dispersionSpeedMin: 1
   dispersionSpeedMax: 1
   life:
-    liveForever: 1
+    liveForever: 0
     minLifeTime: 25
     maxLifeTime: 50
     deathColor: {r: 1, g: 0.96792454, b: 0.5509434, a: 1}

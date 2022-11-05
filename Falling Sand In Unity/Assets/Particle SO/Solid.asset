@@ -96,7 +96,7 @@ MonoBehaviour:
     strength: 0
     chance: 0
   spread:
-    resistance: 0.25
+    resistance: 0.6
     strength: 0
     chance: 0
     spreadDirection: 2
