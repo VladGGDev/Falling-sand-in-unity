@@ -10,6 +10,7 @@ public class ParticleObject : ScriptableObject
 		"Each particle must have a unique type (just like an id).")]
 	public byte type = 1;
 	[Tooltip("The colors of the particle. The gradient is used to change the proportion of colors")]
+	//[GradientUsage(true)]
 	public Gradient colors;
 	[Tooltip("Instead of using a noise value to determine the color, the particle will use this texture instead.\n" +
 		"Leave empty to use the color gradient from above.")]

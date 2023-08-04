@@ -315,7 +315,7 @@ GameObject:
   m_Icon: {fileID: 0}
   m_NavMeshLayer: 0
   m_StaticEditorFlags: 0
-  m_IsActive: 0
+  m_IsActive: 1
 --- !u!114 &1378547648
 MonoBehaviour:
   m_ObjectHideFlags: 0
@@ -446,14 +446,14 @@ MonoBehaviour:
   m_Name: 
   m_EditorClassIdentifier: 
   pixelsPerUnit: 16
-  simWidth: 256
-  simHeight: 256
+  simWidth: 128
+  simHeight: 128
   chunkWidth: 8
   chunkHeight: 4
   chunkDebug: 0
   texture: {fileID: 0}
   spriteRenderer: {fileID: 1626381618}
-  backGroundColor: {r: 1, g: 1, b: 1, a: 1}
+  backGroundColor: {r: 0, g: 0, b: 0, a: 1}
   textureFilter: 0
 --- !u!114 &1626381621
 MonoBehaviour:
@@ -521,7 +521,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1626381617}
-  m_Enabled: 0
+  m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a44cba8c5cc6ac48bcf2a782e9c52f3, type: 3}
   m_Name: 
