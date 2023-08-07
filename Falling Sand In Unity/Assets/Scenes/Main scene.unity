@@ -283,6 +283,7 @@ MonoBehaviour:
   - {fileID: 11400000, guid: 3310003ed3c460140b8ad399400aa3fa, type: 2}
   - {fileID: 11400000, guid: 3ff25a57338cb484a898a9cac1396f4f, type: 2}
   - {fileID: 11400000, guid: 50575ce50fc647d4daa17f22c1a37cfb, type: 2}
+  - {fileID: 11400000, guid: a283ffb634676b34193c69a4c8c6c5c9, type: 2}
   - {fileID: 11400000, guid: 3cd12bef82c04fb4ba37910d0dd6180e, type: 2}
   - {fileID: 11400000, guid: 59adfb76b93de2b4abff91708074f53d, type: 2}
 --- !u!4 &851667360
@@ -449,7 +450,7 @@ MonoBehaviour:
   simWidth: 128
   simHeight: 128
   chunkWidth: 8
-  chunkHeight: 4
+  chunkHeight: 8
   chunkDebug: 0
   texture: {fileID: 0}
   spriteRenderer: {fileID: 1626381618}
@@ -492,7 +493,7 @@ PolygonCollider2D:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1626381617}
-  m_Enabled: 1
+  m_Enabled: 0
   m_Density: 1
   m_Material: {fileID: 0}
   m_IsTrigger: 0
@@ -521,7 +522,7 @@ MonoBehaviour:
   m_PrefabInstance: {fileID: 0}
   m_PrefabAsset: {fileID: 0}
   m_GameObject: {fileID: 1626381617}
-  m_Enabled: 1
+  m_Enabled: 0
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 6a44cba8c5cc6ac48bcf2a782e9c52f3, type: 3}
   m_Name: 

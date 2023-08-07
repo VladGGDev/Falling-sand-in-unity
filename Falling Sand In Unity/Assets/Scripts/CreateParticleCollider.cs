@@ -199,7 +199,7 @@ public class CreateParticleCollider : MonoBehaviour
         bool[,] keepParticleH = new bool[particleLogic.simWidth, particleLogic.simHeight];
         bool[,] keepParticleV = new bool[particleLogic.simWidth, particleLogic.simHeight];
 
-        //Horisontal neighbor check
+        //Horizontal neighbor check
 		for (int y = 0; y < particleLogic.simHeight; y++){
 			for (int x = 0; x < particleLogic.simWidth; x++){   //Repeats for every particle
 

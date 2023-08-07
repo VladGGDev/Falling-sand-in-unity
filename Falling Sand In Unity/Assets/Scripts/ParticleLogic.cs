@@ -9,8 +9,8 @@ public class ParticleLogic : MonoBehaviour
 	public int simHeight = 10;
 	public int chunkWidth = 25;
 	public int chunkHeight = 25;
-	int simChunkWidth;
-	int simChunkHeight;
+	int simChunkWidth => simWidth / chunkWidth;
+	int simChunkHeight => simHeight / chunkHeight;
 	public bool chunkDebug = false;
 	public Particle[,] particles;
 	public Chunk[,] chunks;
@@ -53,9 +53,7 @@ public class ParticleLogic : MonoBehaviour
 
 
 		// Instanciate the chunk grid
-		chunks = new Chunk[simWidth / chunkWidth, simHeight / chunkHeight];
-		simChunkWidth = simWidth / chunkWidth;
-		simChunkHeight = simHeight / chunkHeight;
+		chunks = new Chunk[simChunkWidth, simChunkHeight];
 		for (int y = 0; y < chunks.GetLength(1); y++)
 			for (int x = 0; x < chunks.GetLength(0); x++)
 				chunks[x, y] = new Chunk();
@@ -148,7 +146,7 @@ public class ParticleLogic : MonoBehaviour
 		//}
 	}
 
-	public void ChunkUpdateStep()
+	public void ChunkUpdateStateStep()
 	{
 		for (int y = 0; y < chunks.GetLength(1); y++)
 			for (int x = 0; x < chunks.GetLength(0); x++)
@@ -269,214 +267,454 @@ public class ParticleLogic : MonoBehaviour
 				minStepTime -= ParticleManager.instance.minParticleStepTime;
 			else
 				minStepTime -= ParticleManager.instance.maxParticleStepTime;
-			ParticlePhysicsStep();
+			SimulationPhysicsStep();
 		}
 	}
 
-	private void ParticlePhysicsStep()
+	void SimulationPhysicsStep()
 	{
-		for (int y = 0; y < simHeight; y++)
+		for (int y = 0; y < simChunkHeight; y++)
 		{
-			for (int x = 0; x < simWidth; x++)
+			for (int x = 0; x < simChunkWidth; x++)
 			{
-				if (particles[x, y].hasBeenUpdated)
-				{
-					SetParticleUpdateStatus(x, y, false);
-					continue;
-				}
-				if (particles[x, y].type == 0)
-					continue;
-				if(!WasChunkUpdated(x, y))
-				{
-					x += chunkWidth - 1;
-					continue;
-				}
-				if (particles[x, y].framesWaited > 0)
-				{
-					particles[x, y].framesWaited--;
-					UpdateSurroundingChunksNoCheck(x, y);
-					continue;
-				}
-
-				ParticleObject currentParticle = ParticleObjectFromIndex(x, y);
-
-				CollideWithParticles(new Vector2Int(x, y), currentParticle);
-
-				if (!currentParticle.life.liveForever && particles[x, y].lifeTime <= 0)	//Particle death
-				{
-					if(currentParticle.life.createOnDeath != null && Random.value < currentParticle.life.chance)
-						CreateParticle(currentParticle.life.createOnDeath.type, x, y);
-					else
-						DeleteParticle(x, y);
-					continue;
-				}
-
-
-				//Check for every movement check for this particle object
-				for (int i = 0; i < currentParticle.moveChecks.Length; i++)
-				{
-					ParticleMoveChecks check = currentParticle.moveChecks[i];
-
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.Down)
-						if(!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleDown(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomDownDiagonal)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleRandomDownDiagonal(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.DownRight)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleDownRight(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.DownLeft)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleDownLeft(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.TowardsHorisontalVelocity)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleTowardsVelocity(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomHorisontal)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleRandomVelocity(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.Right)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleRight(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.Left)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleLeft(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.Up)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleUp(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomUpDiagonal)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleRandomUpDiagonal(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.UpRight)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleUpRight(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.UpLeft)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed){
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleUpLeft(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.PlusRandom)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed)
-							{
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticlePlusRandom(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.XRandom)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed)
-							{
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleXRandom(new Vector2Int(x, y), currentParticle))
-								break;
-					if (check.moveDirection == ParticleMoveChecks.MoveDirection.EightRandom)
-						if (!(check.movementChance > Random.value))
-							if (!check.continueIfFailed)
-							{
-								UpdateSurroundingChunks(x, y);
-								break;
-							}
-						else
-							if (CheckParticleEightRandom(new Vector2Int(x, y), currentParticle))
-								break;
-				}
-
-
-				if (particles[x, y].lifeTime > 0 && !currentParticle.life.liveForever)
-				{
-					particles[x, y].lifeTime--;
-					UpdateSurroundingChunksNoCheck(x, y);
-				}
-				//Spread the particle
-				if (currentParticle.spread.strength > 0)
-				{
-					if (particles[x, y].freshSpread > 0)
-					{
-						UpdateSurroundingChunksNoCheck(x, y);
-						particles[x, y].freshSpread--;
-					}
-					SpreadParticle(new Vector2Int(x, y), currentParticle);
-				}
+				ChunkPhysicsStep(x, y);
 			}
 		}
+
 		DrawParticles();
-		ChunkUpdateStep();
+		ChunkUpdateStateStep();
+
+		//for (int y = 0; y < simHeight; y++)
+		//{
+		//	for (int x = 0; x < simWidth; x++)
+		//	{
+		//		if (particles[x, y].hasBeenUpdated)
+		//		{
+		//			SetParticleUpdateStatus(x, y, false);
+		//			continue;
+		//		}
+		//		if (particles[x, y].type == 0)
+		//			continue;
+		//		if (!WasChunkUpdated(x, y))
+		//		{
+		//			x += chunkWidth - 1;
+		//			continue;
+		//		}
+		//		if (particles[x, y].framesWaited > 0)
+		//		{
+		//			particles[x, y].framesWaited--;
+		//			UpdateSurroundingChunksNoCheck(x, y);
+		//			continue;
+		//		}
+
+		//		ParticleObject currentParticle = ParticleObjectFromIndex(x, y);
+
+		//		CollideWithParticles(new Vector2Int(x, y), currentParticle);
+
+		//		if (!currentParticle.life.liveForever && particles[x, y].lifeTime <= 0) //Particle death
+		//		{
+		//			if (currentParticle.life.createOnDeath != null && Random.value < currentParticle.life.chance)
+		//				CreateParticle(currentParticle.life.createOnDeath.type, x, y);
+		//			else
+		//				DeleteParticle(x, y);
+		//			continue;
+		//		}
+
+
+		//		//Check for every movement check for this particle object
+		//		for (int i = 0; i < currentParticle.moveChecks.Length; i++)
+		//		{
+		//			ParticleMoveChecks check = currentParticle.moveChecks[i];
+
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.Down)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleDown(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomDownDiagonal)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleRandomDownDiagonal(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.DownRight)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleDownRight(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.DownLeft)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleDownLeft(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.TowardsHorizontalVelocity)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleTowardsVelocity(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomHorizontal)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleRandomVelocity(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.Right)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleRight(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.Left)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleLeft(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.Up)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleUp(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomUpDiagonal)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleRandomUpDiagonal(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.UpRight)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleUpRight(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.UpLeft)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleUpLeft(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.PlusRandom)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticlePlusRandom(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.XRandom)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleXRandom(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//			if (check.moveDirection == ParticleMoveChecks.MoveDirection.EightRandom)
+		//				if (!(check.movementChance > Random.value))
+		//					if (!check.continueIfFailed)
+		//					{
+		//						UpdateSurroundingChunks(x, y);
+		//						break;
+		//					}
+		//					else
+		//					if (CheckParticleEightRandom(new Vector2Int(x, y), currentParticle))
+		//						break;
+		//		}
+
+
+		//		if (particles[x, y].lifeTime > 0 && !currentParticle.life.liveForever)
+		//		{
+		//			particles[x, y].lifeTime--;
+		//			UpdateSurroundingChunksNoCheck(x, y);
+		//		}
+		//		//Spread the particle
+		//		if (currentParticle.spread.strength > 0)
+		//		{
+		//			if (particles[x, y].freshSpread > 0)
+		//			{
+		//				UpdateSurroundingChunksNoCheck(x, y);
+		//				particles[x, y].freshSpread--;
+		//			}
+		//			SpreadParticle(new Vector2Int(x, y), currentParticle);
+		//		}
+		//	}
+		//}
+		//DrawParticles();
+		//ChunkUpdateStep();
+	}
+
+	void ChunkPhysicsStep(int chunkX, int chunkY)
+	{
+		int rand = Random.Range(0, 4);
+
+		if (rand == 0)
+			for (int y = 0; y < chunkHeight; y++)
+				for (int x = 0; x < chunkWidth; x++)
+					ParticlePhysicsStep(chunkX + x, chunkY + y);
+		else if (rand == 1)
+			for (int y = chunkHeight - 1; y >= 0; y--)
+				for (int x = 0; x < chunkWidth; x++)
+					ParticlePhysicsStep(chunkX + x, chunkY + y);
+		else if (rand == 2)
+			for (int y = 0; y < chunkHeight; y++)
+				for (int x = chunkWidth - 1; x >= 0; x--)
+					ParticlePhysicsStep(chunkX + x, chunkY + y);
+		else if (rand == 3)
+			for (int y = chunkHeight - 1; y >= 0; y--)
+				for (int x = chunkWidth - 1; x >= 0; x--)
+					ParticlePhysicsStep(chunkX + x, chunkY + y);
+	}
+
+	void ParticlePhysicsStep(int x, int y)
+	{
+		if (particles[x, y].hasBeenUpdated)
+		{
+			SetParticleUpdateStatus(x, y, false);
+			return;
+		}
+		if (particles[x, y].type == 0)
+			return;
+		if(!WasChunkUpdated(x, y))
+			return;
+		if (particles[x, y].framesWaited > 0)
+		{
+			particles[x, y].framesWaited--;
+			UpdateSurroundingChunksNoCheck(x, y);
+			return;
+		}
+
+		ParticleObject currentParticle = ParticleObjectFromIndex(x, y);
+
+		CollideWithParticles(new Vector2Int(x, y), currentParticle);
+
+		if (!currentParticle.life.liveForever && particles[x, y].lifeTime <= 0)	//Particle death
+		{
+			if(currentParticle.life.createOnDeath != null && Random.value < currentParticle.life.chance)
+				CreateParticle(currentParticle.life.createOnDeath.type, x, y);
+			else
+				DeleteParticle(x, y);
+			return;
+		}
+
+
+		//Check for every movement check for this particle object
+		for (int i = 0; i < currentParticle.moveChecks.Length; i++)
+		{
+			ParticleMoveChecks check = currentParticle.moveChecks[i];
+
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.Down)
+				if(!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleDown(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomDownDiagonal)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleRandomDownDiagonal(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.DownRight)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleDownRight(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.DownLeft)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleDownLeft(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.TowardsHorizontalVelocity)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleTowardsVelocity(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomHorizontal)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleRandomVelocity(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.Right)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleRight(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.Left)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleLeft(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.Up)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleUp(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.RandomUpDiagonal)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleRandomUpDiagonal(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.UpRight)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleUpRight(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.UpLeft)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed){
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleUpLeft(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.PlusRandom)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed)
+					{
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticlePlusRandom(new Vector2Int(x, y), ParticleObjectFromIndex(x, y)))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.XRandom)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed)
+					{
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleXRandom(new Vector2Int(x, y), currentParticle))
+						break;
+			if (check.moveDirection == ParticleMoveChecks.MoveDirection.EightRandom)
+				if (!(check.movementChance > Random.value))
+					if (!check.continueIfFailed)
+					{
+						UpdateSurroundingChunks(x, y);
+						break;
+					}
+				else
+					if (CheckParticleEightRandom(new Vector2Int(x, y), currentParticle))
+						break;
+		}
+
+
+		if (particles[x, y].lifeTime > 0 && !currentParticle.life.liveForever)
+		{
+			particles[x, y].lifeTime--;
+			UpdateSurroundingChunksNoCheck(x, y);
+		}
+		//Spread the particle
+		if (currentParticle.spread.strength > 0)
+		{
+			if (particles[x, y].freshSpread > 0)
+			{
+				UpdateSurroundingChunksNoCheck(x, y);
+				particles[x, y].freshSpread--;
+			}
+			SpreadParticle(new Vector2Int(x, y), currentParticle);
+		}
 	}
 
 	public void DrawParticles()
